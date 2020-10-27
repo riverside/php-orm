@@ -1,0 +1,31 @@
+{
+    "name": "riverside/php-orm",
+    "description": "PHP ORM",
+    "type": "library",
+    "version": "1.0.0",
+    "keywords": ["php", "orm", "application"],
+    "homepage": "https://github.com/riverside/php-orm",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dimitar Ivanov",
+            "email": "info@zinoui.com",
+            "homepage": "https://zinoui.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "8"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpOrm": "src/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    }
+}
