@@ -3,7 +3,7 @@
     "description": "PHP ORM",
     "type": "library",
     "version": "1.0.0",
-    "keywords": ["php", "orm", "application"],
+    "keywords": ["php", "orm", "pdo", "mysql", "database"],
     "homepage": "https://github.com/riverside/php-orm",
     "license": "MIT",
     "authors": [
