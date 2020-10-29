@@ -65,6 +65,5 @@ User::factory()->get();
 ### Query without a model
 If you prefer to use it directly:
 ```php
-<?php
 DB::table('users')->get();
 ```
