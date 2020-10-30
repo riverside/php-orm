@@ -21,11 +21,11 @@ class DB
     
     private $params = array();
 
-    protected $pk = null;
-    
     private $rowCount = null;
     
     private $select = null;
+    
+    private $sth = null;
     
     protected $table = null;
     
@@ -102,14 +102,10 @@ class DB
                 $tmp[] = sprintf("%s %s %s",
                     $item['column'],
                     $item['operator'],
-                    ":where_$i"
-                    /*$item['value'] instanceof Expression
-                        ? $item['value']
-                        : "'" . $item['value'] . "'"*/);
+                    ":where_$i");
                 $this->param(":where_$i", $item['value']);
             } else {
                 $tmp[] = $item['value'];
-                //$tmp[] = ":where_$i";
             }            
 
             $i += 1;
@@ -167,28 +163,17 @@ class DB
         
         $statement .= " LIMIT 1;";
         
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($statement))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
-        {
-            return false;
-        }
+        $this->dump();
         
-        if ($this->debug)
-        {
-            echo '<pre>';
-            $sth->debugDumpParams();
-            echo '</pre>';
-        }
-        
-        return $sth->fetchColumn();
+        return $this->sth->fetchColumn();
     }
     
-    public function debug(bool $value=null): DB
+    public function debug(bool $value): DB
     {
         $this->debug = $value;
         
@@ -225,103 +210,79 @@ class DB
             $statement .= sprintf(" LIMIT %u;", $this->rowCount);
         }
         
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($statement))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
-        {
-            return false;
-        }
+        $this->dump();
         
+        return $this->sth->rowCount();
+    }
+
+    protected function dump()
+    {
         if ($this->debug)
         {
             echo '<pre>';
-            $sth->debugDumpParams();
+            $this->sth->debugDumpParams();
             echo '</pre>';
         }
-        
-        return $sth->rowCount();
     }
-      
+
     public function find($value): ?array
     {
-        $this->where($this->pk, $value);
+        $this->where('id', $value);
         $this->limit(1, 0);
         
-        $statement = $this->buildSelect();
-        
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($this->buildSelect()))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
+        $this->dump();
+        
+        return $this->sth->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    protected function fire(string $statement): bool
+    {
+        $this->sth = $this->dbh->prepare($statement);
+        if (!$this->sth)
         {
             return false;
         }
         
-        if ($this->debug)
+        if (!$this->sth->execute($this->params))
         {
-            echo '<pre>';
-            $sth->debugDumpParams();
-            echo '</pre>';
+            return false;
         }
         
-        return $sth->fetch(\PDO::FETCH_ASSOC);
+        return true;
     }
     
     public function first(): ?array
     {
-        $statement = $this->buildSelect();
-        
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($this->buildSelect()))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
-        {
-            return false;
-        }
+        $this->dump();
         
-        if ($this->debug)
-        {
-            echo '<pre>';
-            $sth->debugDumpParams();
-            echo '</pre>';
-        }
-        
-        return $sth->fetch(\PDO::FETCH_ASSOC);
+        return $this->sth->fetch(\PDO::FETCH_ASSOC);
     }
     
     public function get(): ?array
     {
-        $statement = $this->buildSelect();
-        
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($this->buildSelect()))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
-        {
-            return false;
-        }
+        $this->dump();
         
-        if ($this->debug)
-        {
-            echo '<pre>';
-            $sth->debugDumpParams();
-            echo '</pre>';
-        }
-        
-        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function groupBy(string $value=null): DB
@@ -369,18 +330,12 @@ class DB
         
         $statement .= " SET " . join(", ", $tmp);
         
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($statement))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
-        {
-            return false;
-        }
-        
-        return $sth->rowCount()
+        return $this->sth->rowCount()
             ? $this->dbh->lastInsertId()
             : false;
     }
@@ -457,6 +412,7 @@ class DB
         $this->params   = array();
         $this->rowCount = null;
         $this->select   = null;
+        $this->sth      = null;
         $this->where    = array();
         
         return $this;
@@ -469,13 +425,11 @@ class DB
         return $this;
     }
     
-    public static function table(string $value): DB
+    public function table(string $value): DB
     {
-        $inst = new self();
+        $this->table = $value;
         
-        $inst->table = $value;
-        
-        return $inst;
+        return $this;
     }
     
     public function truncate(): bool
@@ -533,27 +487,27 @@ class DB
             $statement .= sprintf(" LIMIT %u;", $this->rowCount);
         }
         
-        $sth = $this->dbh->prepare($statement);
-        if (!$sth)
+        if (!$this->fire($statement))
         {
             return false;
         }
         
-        if (!$sth->execute($this->params))
+        $this->dump();
+        
+        return $this->sth->rowCount();
+        }
+        
+    public function value(string $column): string
+    {
+        $row = $this->first();
+        if (!$row)
         {
             return false;
-        }
-        
-        if ($this->debug)
-        {
-            echo '<pre>';
-            $sth->debugDumpParams();
-            echo '</pre>';
-        }
-        
-        return $sth->rowCount();
     }
-        
+
+        return array_key_exists($column, $row) ? $row[$column] : NULL;
+    }
+
     public function where(): DB
     {
         switch (func_num_args())
@@ -573,6 +527,10 @@ class DB
                 $operator = func_get_arg(1);
                 $value    = func_get_arg(2);
                 break;
+            default:
+                $column   = null;
+                $operator = null;
+                $value    = null;
         }
         
         $this->where[] = array(
