@@ -45,8 +45,6 @@ use PhpOrm\DB;
 
 class User extends DB
 {
-    protected $pk = 'id';
-    
     protected $table = 'users';
     
     public static function factory()
@@ -65,5 +63,6 @@ User::factory()->get();
 ### Query without a model
 If you prefer to use it directly:
 ```php
-DB::table('users')->get();
+$db = new DB();
+$db->table('users')->get();
 ```
