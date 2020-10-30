@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" dir="ltr" prefix="og: http://ogp.me/ns#">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PHP micro-ORM library</title>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PHP ORM">
+    <meta name="twitter:description" content="PHP micro-ORM inspired by Eloquent ORM by Laravel">
+    <meta name="twitter:image:src" content="https://riverside.github.io/php-orm/img/php-orm.png">
+    <meta name="twitter:url" content="https://riverside.github.io/php-orm/">
+    <meta name="twitter:site" content="@zino_ui">
+    <meta name="twitter:creator" content="@DimitarIvanov">
+    <meta name="twitter:domain" content="zinoui.com">
+    <meta property="og:title" content="PHP ORM">
+    <meta property="og:site_name" content="Zino UI">
+    <meta property="og:url" content="https://riverside.github.io/php-orm/">
+    <meta property="og:description" content="PHP micro-ORM inspired by Eloquent ORM by Laravel">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:author" content="https://twitter.com/DimitarIvanov">
+    <meta property="article:publisher" content="https://github.com/riverside">
+    <meta property="og:image" content="https://riverside.github.io/php-orm/img/php-orm.png">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/docs.css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-298048-24"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-298048-24');
+    </script>
+</head>
+<body>
+
+    <nav class="navbar navbar-default navbar-fixed-top" id="nav">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">PHP ORM</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="./">Home</a></li>
+                    <li class="active"><a href="api.html">API</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/riverside/php-orm">View project on GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" id="main">
+        <div class="row">
+            <div class="col-md-2" role="complementary">
+                <nav class="hidden-sm hidden-xs">
+                    <ul class="nav" id="menu">
+                        <li><a href="#db">DB</a>
+                            <ul class="nav">
+                                <li><a href="#db-construct">__construct()</a></li>
+                                <li><a href="#db-count">count()</a></li>
+                                <li><a href="#db-debug">debug()</a></li>
+                                <li><a href="#db-delete">delete()</a></li>
+                                <li><a href="#db-find">find()</a></li>
+                                <li><a href="#db-first">first()</a></li>
+                                <li><a href="#db-get">get()</a></li>
+                                <li><a href="#db-groupBy">groupBy()</a></li>
+                                <li><a href="#db-having">having()</a></li>
+                                <li><a href="#db-insert">insert()</a></li>
+                                <li><a href="#db-join">join()</a></li>
+                                <li><a href="#db-leftJoin">leftJoin()</a></li>
+                                <li><a href="#db-rightJoin">rightJoin()</a></li>
+                                <li><a href="#db-limit">limit()</a></li>
+                                <li><a href="#db-orderBy">orderBy()</a></li>
+                                <li><a href="#db-param">param()</a></li>
+                                <li><a href="#db-raw">raw()</a></li>
+                                <li><a href="#db-reset">reset()</a></li>
+                                <li><a href="#db-select">select()</a></li>
+                                <li><a href="#db-table">table()</a></li>
+                                <li><a href="#db-truncate">truncate()</a></li>
+                                <li><a href="#db-update">update()</a></li>
+                                <li><a href="#db-value">value()</a></li>
+                                <li><a href="#db-where">where()</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#expr">Expression</a>
+                            <ul class="nav">
+                                <li><a href="#expr-construct">__construct()</a></li>
+                                <li><a href="#expr-getValue">getValue()</a></li>
+                                <li><a href="#expr-toString">__toString()</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div><!-- .col-md-2 -->
+            <div class="col-md-10" role="main">
+                <!-- DB -->
+                <h2 class="h3" id="db">DB</h2>
+                <p></p>
+                <section>
+                    <h3 class="h4" id="db-construct">__construct()</h3>
+                    <p>Creates an instance of <code>DB</code> class.</p>
+                    <pre class="prettyprint">$db = new DB();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-count">count()</h3>
+                    <p>Returns a count of the number of non-<code>NULL</code> values in the rows retrieved by a <code>SELECT</code>
+                        statement.</p>
+                    <pre class="prettyprint">$db->count();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-debug">debug(bool $value)</h3>
+                    <p>Dumps the information contained by a prepared statement directly on the output.</p>
+                    <pre class="prettyprint">$db->debug(true);</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-delete">delete($modifiers=null)</h3>
+                    <p>Deletes rows from table, and returns the number of records deleted. Available modifiers are:
+                        <code>LOW_PRIORITY</code>, <code>QUICK</code>, and <code>IGNORE</code>.</p>
+                    <pre class="prettyprint">$db->delete();
+$db->delete('IGNORE');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-find">find($value)</h3>
+                    <p>Execute the query as a <code>SELECT</code> statement and retrieve a single row by its <code>id</code> column value.</p>
+                    <pre class="prettyprint">$db->find(1);</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-first">first()</h3>
+                    <p>Execute the query as a <code>SELECT</code> statement and retrieve a single row from the result set.</p>
+                    <pre class="prettyprint">$db->first();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-get">get()</h3>
+                    <p>Execute the query as a <code>SELECT</code> statement.</p>
+                    <pre class="prettyprint">$db->get();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-groupBy">groupBy(string $value=null)</h3>
+                    <p>Add a generic <code>GROUP BY</code> clause.</p>
+                    <pre class="prettyprint">$db->groupBy('id');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-having">having(string $value=null)</h3>
+                    <p>Add a generic <code>HAVING</code> clause.</p>
+                    <pre class="prettyprint">$db->having('cnt > 0');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-insert">insert(array $data, $modifiers=null)</h3>
+                    <p>Available modifiers are: <code>LOW_PRIORITY</code>, <code>DELAYED</code>,
+                        <code>HIGH_PRIORITY</code>, <code>IGNORE</code></p>
+                    <pre class="prettyprint">$db->insert(['name'=>'John']);
+$db->insert(['name'=>'John'], 'IGNORE');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-join">join(string $table, string $conditions)</h3>
+                    <p>Add a generic <code>INNER JOIN</code> clause.</p>
+                    <pre class="prettyprint">$db->join('roles', 'roles.id=users.role_id');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-leftJoin">leftJoin(string $table, string $conditions)</h3>
+                    <p>Add a generic <code>LEFT JOIN</code> clause.</p>
+                    <pre class="prettyprint">$db->leftJoin('roles', 'roles.id=users.role_id');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-rightJoin">rightJoin(string $table, string $conditions)</h3>
+                    <p>Add a generic <code>RIGHT JOIN</code> clause.</p>
+                    <pre class="prettyprint">$db->rightJoin('roles', 'roles.id=users.role_id');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-limit">limit(int $rowCount=null, int $offset=null)</h3>
+                    <p>Add a generic <code>LIMIT</code> clause.</p>
+                    <pre class="prettyprint">$db->limit(10, 20);</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-orderBy">orderBy(string $value=null)</h3>
+                    <p>Add a generic <code>ORDER BY</code> clause.</p>
+                    <pre class="prettyprint">$db->orderBy('name ASC');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-param">param(string $key, $value)</h3>
+                    <p>Binds a value to a corresponding named placeholder in the SQL statement that was used to prepare
+                        the statement.</p>
+                    <pre class="prettyprint">$db->param(':q', 'John');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-raw">raw(string $value)</h3>
+                    <p>Returns new <code>Expression()</code></p>
+                    <pre class="prettyprint">DB::raw('NOW()');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-reset">reset()</h3>
+                    <p>Reset all query builder's clauses.</p>
+                    <pre class="prettyprint">$db->reset();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-select">select(string $value=null)</h3>
+                    <p>Add a generic <code>SELECT</code> clause.</p>
+                    <pre class="prettyprint">$db->select('users.id, users.name');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-table">table(string $value)</h3>
+                    <p>Change table name.</p>
+                    <pre class="prettyprint">$db->table('users');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-truncate">truncate()</h3>
+                    <p>Empties a table completely.</p>
+                    <pre class="prettyprint">$db->truncate();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-update">update(array $data, $modifiers=null)</h3>
+                    <p>Update records in the database. Available modifiers are: <code>LOW_PRIORITY</code>, <code>IGNORE</code></p>
+                    <pre class="prettyprint">$db->update(['name'=>'Peter']);
+$db->update(['name'=>'Peter'], 'IGNORE');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-value">value(string $column)</h3>
+                    <p>Get a single column's value from the first result of a query.</p>
+                    <pre class="prettyprint">$db->value('name');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-where">where()</h3>
+                    <p>Add a basic where clause to the query.</p>
+                    <pre class="prettyprint">$db->where('(name LIKE :q OR email LIKE :q)');
+$db->where('id', 1);
+$db->where('id', '=', 1);
+$db->where('id', '>', 1);</pre>
+                </section>
+                <!-- Expression -->
+                <h2 class="h3" id="expr">Expression</h2>
+                <section>
+                    <h3 class="h4" id="expr-construct">__construct(string $value)</h3>
+                    <p>Create an instance of <code>Expression</code> class.</p>
+                    <pre class="prettyprint">$expr = new Expression('NOW()');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="expr-getValue">getValue()</h3>
+                    <p>Returns the value.</p>
+                    <pre class="prettyprint">$expr->getValue();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="expr-toString">__toString()</h3>
+                    <p>Returns the value as string.</p>
+                    <pre class="prettyprint">echo $expr;</pre>
+                </section>
+
+            </div><!-- .col-md-10 -->
+        </div><!-- .row -->
+    </div><!-- .container -->
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/run_prettify.js"></script>
+    <script src="js/docs.js"></script>
+</body>
+</html>
