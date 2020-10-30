@@ -16,9 +16,10 @@ class DBTest extends TestCase
             'join',
             'offset',
             'orderBy',
-            'pk',
+            'params',
             'rowCount',
             'select',
+            'sth',
             'table',
             'where',
         );
