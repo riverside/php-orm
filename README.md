@@ -1,5 +1,7 @@
 # php-orm
- PHP micro-ORM library
+[![Build Status](https://api.travis-ci.org/riverside/php-orm.svg)](https://travis-ci.org/riverside/php-orm) [![Latest Stable Version](https://poser.pugx.org/riverside/php-orm/v/stable)](https://packagist.org/packages/riverside/php-orm) [![License](https://poser.pugx.org/riverside/php-orm/license)](https://packagist.org/packages/riverside/php-orm)
+
+PHP micro-ORM and query builder.
 
 ### Requirements
 - PHP >= 7.1
