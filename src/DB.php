@@ -3,6 +3,8 @@ namespace PhpOrm;
 
 class DB
 {
+    private static $connection = null;
+
     private $data = null;
     
     private $dbh = null;
@@ -116,6 +118,12 @@ class DB
     
     protected function connect(): void
     {
+        if (is_object(self::$connection))
+        {
+            $this->dbh = self::$connection;
+            return;
+        }
+
         $dsn      = getenv('PHP_ORM_DSN', true);
         $user     = getenv('PHP_ORM_USER', true);
         $password = getenv('PHP_ORM_PSWD', true);
@@ -125,6 +133,8 @@ class DB
             $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES,true);
             
+            self::$connection = $this->dbh;
+
         } catch (\PDOException $e) {
             echo 'Connection failed: ' . $e->getMessage();
         }
