@@ -7,8 +7,8 @@ class ExpressionTest extends TestCase
 {
     public function testString()
     {
-        $expression = new Expression('NOW()');
-
-        $this->assertIsString($expression);
+        $stub = $this->createMock(Expression::class);
+        $stub->method('__toString')->willReturn('string');
+        $this->assertEquals('string', (string) $stub);
     }
 }
