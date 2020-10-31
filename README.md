@@ -1,7 +1,9 @@
 # php-orm
-[![Build Status](https://api.travis-ci.org/riverside/php-orm.svg)](https://travis-ci.org/riverside/php-orm) [![Latest Stable Version](https://poser.pugx.org/riverside/php-orm/v/stable)](https://packagist.org/packages/riverside/php-orm) [![License](https://poser.pugx.org/riverside/php-orm/license)](https://packagist.org/packages/riverside/php-orm)
-
 PHP micro-ORM and query builder.
+
+| Build | Stable | License |
+| ----- | ------ | ------- |
+| [![Build Status][x1]][y1] | [![Latest Stable Version][x2]][y2] | [![License][x3]][y3] |
 
 ### Requirements
 - PHP >= 7.1
@@ -36,7 +38,7 @@ putenv('PHP_ORM_PSWD=mypswd');
 Include autoload in your project: 
 ```php
 <?php
-include __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 ```
 
 ### Models
@@ -56,15 +58,28 @@ class User extends DB
 }
 ```
 
-### Query using a model
-First create an instance of a model using the `factory` method. Then chain multiple methods.
+### Query Builder
+- with model:
+ create an instance of a model using the `factory` method. Then chain multiple methods.
 ```php
 User::factory()->get();
 ```
 
-### Query without a model
-If you prefer to use it directly:
+- without model: create a new instance of `PhpOrm\DB` class
 ```php
-$db = new DB();
+$db = new \PhpOrm\DB();
 $db->table('users')->get();
 ```
+
+### API
+- [DB][1]
+- [Expression][2]
+
+[1]: https://riverside.github.io/php-orm/api.html#db
+[2]: https://riverside.github.io/php-orm/api.html#expr
+[x1]: https://api.travis-ci.org/riverside/php-orm.svg
+[y1]: https://travis-ci.org/riverside/php-orm
+[x2]: https://poser.pugx.org/riverside/php-orm/v/stable
+[y2]: https://packagist.org/packages/riverside/php-orm
+[x3]: https://poser.pugx.org/riverside/php-orm/license
+[y3]: https://packagist.org/packages/riverside/php-orm
