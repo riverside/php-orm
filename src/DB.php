@@ -37,7 +37,46 @@ class DB
     {
         $this->connect();
     }
-    
+
+    protected function buildInsert(array $data, $modifiers=null, $upsert=false): string
+    {
+        if ($modifiers)
+        {
+            $modifiers = is_array($modifiers) ? $modifiers : array($modifiers);
+            $modifiers = array_intersect(array('LOW_PRIORITY', 'DELAYED', 'HIGH_PRIORITY', 'IGNORE'), $modifiers);
+        }
+
+        if ($modifiers)
+        {
+            $statement = sprintf("INSERT %s INTO %s", join(' ', $modifiers), $this->table);
+        } else {
+            $statement = sprintf("INSERT INTO %s", $this->table);
+        }
+
+        $tmp = array();
+        $i = 0;
+        foreach ($data as $column => $value)
+        {
+            if ($value instanceof Expression)
+            {
+                $tmp[] = sprintf("%s = %s", $column, $value);
+            } else {
+                $tmp[] = sprintf("%s = :set_$i", $column);
+                $this->param(":set_$i", $value);
+            }
+            $i += 1;
+        }
+
+        if ($upsert)
+        {
+            $statement .= sprintf(" SET %1\$s ON DUPLICATE KEY UPDATE %1\$s;", join(", ", $tmp));
+        } else {
+            $statement .= sprintf(" SET %s;", join(", ", $tmp));
+        }
+
+        return $statement;
+    }
+
     protected function buildJoin(): string
     {
         $tmp = array();
@@ -84,11 +123,13 @@ class DB
         {
             if (is_numeric($this->offset))
             {
-                $statement .= sprintf(" LIMIT %u, %u;", $this->offset, $this->rowCount);
+                $statement .= sprintf(" LIMIT %u, %u", $this->offset, $this->rowCount);
             } else {
-                $statement .= sprintf(" LIMIT %u;", $this->rowCount);
+                $statement .= sprintf(" LIMIT %u", $this->rowCount);
             }
         }
+
+        $statement .= ";";
         
         return $statement;
     }
@@ -311,36 +352,7 @@ class DB
 
     public function insert(array $data, $modifiers=null): ?int
     {
-        if ($modifiers)
-        {
-            $modifiers = is_array($modifiers) ? $modifiers : array($modifiers);
-            $modifiers = array_intersect(array('LOW_PRIORITY', 'DELAYED', 'HIGH_PRIORITY', 'IGNORE'), $modifiers);
-        }
-        
-        if ($modifiers)
-        {
-            $statement = sprintf("INSERT %s INTO %s", join(' ', $modifiers), $this->table);
-        } else {
-            $statement = sprintf("INSERT INTO %s", $this->table);
-        }
-        
-        $tmp = array();
-        $i = 0;
-        foreach ($data as $column => $value)
-        {
-            if ($value instanceof Expression)
-            {
-                $tmp[] = sprintf("%s = %s", $column, $value);
-            } else {
-                $tmp[] = sprintf("%s = :set_$i", $column);
-                $this->param(":set_$i", $value);
-            }
-            $i += 1;
-        }
-        
-        $statement .= " SET " . join(", ", $tmp);
-        
-        if (!$this->fire($statement))
+        if (!$this->fire($this->buildInsert($data, $modifiers)))
         {
             return false;
         }
@@ -494,8 +506,10 @@ class DB
         
         if (is_numeric($this->rowCount))
         {
-            $statement .= sprintf(" LIMIT %u;", $this->rowCount);
+            $statement .= sprintf(" LIMIT %u", $this->rowCount);
         }
+
+        $statement .= ";";
         
         if (!$this->fire($statement))
         {
@@ -505,7 +519,19 @@ class DB
         $this->dump();
         
         return $this->sth->rowCount();
+    }
+
+    public function upsert(array $data, $modifiers=null): ?int
+    {
+        if (!$this->fire($this->buildInsert($data, $modifiers, true)))
+        {
+            return false;
         }
+
+        return $this->sth->rowCount()
+            ? $this->dbh->lastInsertId()
+            : false;
+    }
         
     public function value(string $column): string
     {
@@ -513,7 +539,7 @@ class DB
         if (!$row)
         {
             return false;
-    }
+        }
 
         return array_key_exists($column, $row) ? $row[$column] : NULL;
     }
