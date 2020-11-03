@@ -87,6 +87,7 @@
                                 <li><a href="#db-table">table()</a></li>
                                 <li><a href="#db-truncate">truncate()</a></li>
                                 <li><a href="#db-update">update()</a></li>
+                                <li><a href="#db-upsert">upsert()</a></li>
                                 <li><a href="#db-value">value()</a></li>
                                 <li><a href="#db-where">where()</a></li>
                             </ul>
@@ -155,7 +156,7 @@ $db->delete('IGNORE');</pre>
                 </section>
                 <section>
                     <h3 class="h4" id="db-insert">insert(array $data, $modifiers=null)</h3>
-                    <p>Available modifiers are: <code>LOW_PRIORITY</code>, <code>DELAYED</code>,
+                    <p>Insert record in the database. Available modifiers are: <code>LOW_PRIORITY</code>, <code>DELAYED</code>,
                         <code>HIGH_PRIORITY</code>, <code>IGNORE</code></p>
                     <pre class="prettyprint">$db->insert(['name'=>'John']);
 $db->insert(['name'=>'John'], 'IGNORE');</pre>
@@ -221,6 +222,13 @@ $db->insert(['name'=>'John'], 'IGNORE');</pre>
                     <p>Update records in the database. Available modifiers are: <code>LOW_PRIORITY</code>, <code>IGNORE</code></p>
                     <pre class="prettyprint">$db->update(['name'=>'Peter']);
 $db->update(['name'=>'Peter'], 'IGNORE');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-upsert">upsert(array $data, $modifiers=null)</h3>
+                    <p>Insert new records or update the existing ones. Available modifiers are: <code>LOW_PRIORITY</code>, <code>DELAYED</code>,
+                        <code>HIGH_PRIORITY</code>, <code>IGNORE</code></p>
+                    <pre class="prettyprint">$db->upsert(['email'=>'peter@gmail.com','name'=>'Peter Schmidt']);
+$db->upsert(['email'=>'peter@gmail.com','name'=>'Peter Schmidt'], 'LOW_PRIORITY');</pre>
                 </section>
                 <section>
                     <h3 class="h4" id="db-value">value(string $column)</h3>
