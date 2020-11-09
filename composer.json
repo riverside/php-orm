@@ -2,7 +2,7 @@
     "name": "riverside/php-orm",
     "description": "PHP ORM micro-library and query builder",
     "type": "library",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "keywords": ["php", "orm", "pdo", "mysql", "database"],
     "homepage": "https://github.com/riverside/php-orm",
     "license": "MIT",
