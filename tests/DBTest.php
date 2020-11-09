@@ -8,6 +8,7 @@ class DBTest extends TestCase
     public function testAttributes()
     {
         $attributes = array(
+            'attributes',
             'connection',
             'data',
             'dbh',
