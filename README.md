@@ -31,9 +31,9 @@ $ php composer.phar install
 php-orm expects the following environment variables at local level:
 ```php
 <?php
-putenv('PHP_ORM_DSN=mysql:host=localhost;dbname=mydb');
-putenv('PHP_ORM_USER=myuser');
-putenv('PHP_ORM_PSWD=mypswd');
+$_ENV['PHP_ORM_DSN']  = 'mysql:host=localhost;dbname=mydb';
+$_ENV['PHP_ORM_USER'] = 'myuser';
+$_ENV['PHP_ORM_PSWD'] = 'mypswd';
 ```
 Include autoload in your project: 
 ```php
@@ -50,6 +50,8 @@ use PhpOrm\DB;
 class User extends DB
 {
     protected $table = 'users';
+    
+    protected $attributes = ['id', 'name', 'email'];
     
     public static function factory()
     {
