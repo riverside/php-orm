@@ -3,6 +3,8 @@ namespace PhpOrm;
 
 class DB
 {
+    protected $attributes = array();
+
     private static $connection = null;
 
     private $data = null;
@@ -57,9 +59,14 @@ class DB
         $i = 0;
         foreach ($data as $column => $value)
         {
+            if ($this->attributes && !in_array($column, $this->attributes))
+            {
+                continue;
+            }
+
             if ($value instanceof Expression)
             {
-                $tmp[] = sprintf("%s = %s", $column, $value);
+                $tmp[] = sprintf("%s = %s", $column, $value->getValue());
             } else {
                 $tmp[] = sprintf("%s = :set_$i", $column);
                 $this->param(":set_$i", $value);
@@ -85,47 +92,47 @@ class DB
             $tmp[] = sprintf("%s JOIN %s ON %s", $item['type'], $item['table'], $item['conditions']);
         }
         
-        return join(" ", $tmp);
+        return join("\n", $tmp);
     }
     
     protected function buildSelect(): string
     {
         $statement = "SELECT " . ($this->select ? $this->select : '*');
         
-        $statement .= " FROM " . $this->table;
+        $statement .= "\nFROM " . $this->table;
         
         if ($this->join)
         {
-            $statement .= " " . $this->buildJoin();
+            $statement .= "\n" . $this->buildJoin();
         }
         
         if ($this->where)
         {
-            $statement .= " WHERE " . $this->buildWhere();
+            $statement .= "\nWHERE " . $this->buildWhere();
         }
         
         if ($this->groupBy)
         {
-            $statement .= " GROUP BY " . $this->groupBy;
+            $statement .= "\nGROUP BY " . $this->groupBy;
         }
         
         if ($this->having)
         {
-            $statement .= " HAVING " . $this->having;
+            $statement .= "\nHAVING " . $this->having;
         }
         
         if ($this->orderBy)
         {
-            $statement .= " ORDER BY " . $this->orderBy;
+            $statement .= "\nORDER BY " . $this->orderBy;
         }
         
         if (is_numeric($this->rowCount))
         {
             if (is_numeric($this->offset))
             {
-                $statement .= sprintf(" LIMIT %u, %u", $this->offset, $this->rowCount);
+                $statement .= sprintf("\nLIMIT %u, %u", $this->offset, $this->rowCount);
             } else {
-                $statement .= sprintf(" LIMIT %u", $this->rowCount);
+                $statement .= sprintf("\nLIMIT %u", $this->rowCount);
             }
         }
 
@@ -165,9 +172,9 @@ class DB
             return;
         }
 
-        $dsn      = getenv('PHP_ORM_DSN', true);
-        $user     = getenv('PHP_ORM_USER', true);
-        $password = getenv('PHP_ORM_PSWD', true);
+        $dsn      = $_ENV['PHP_ORM_DSN'];
+        $user     = $_ENV['PHP_ORM_USER'];
+        $password = $_ENV['PHP_ORM_PSWD'];
         
         try {
             $this->dbh = new \PDO($dsn, $user, $password);
@@ -258,9 +265,11 @@ class DB
             
         if (is_numeric($this->rowCount))
         {
-            $statement .= sprintf(" LIMIT %u;", $this->rowCount);
+            $statement .= sprintf(" LIMIT %u", $this->rowCount);
         }
         
+        $statement .= ";";
+
         if (!$this->fire($statement))
         {
             return false;
@@ -283,7 +292,7 @@ class DB
 
     public function find($value): ?array
     {
-        $this->where('id', $value);
+        $this->where($this->table . '.id', $value);
         $this->limit(1, 0);
         
         if (!$this->fire($this->buildSelect()))
@@ -293,7 +302,7 @@ class DB
         
         $this->dump();
         
-        return $this->sth->fetch(\PDO::FETCH_ASSOC);
+        return $this->sth->fetch(\PDO::FETCH_ASSOC) ? : NULL;
     }
 
     protected function fire(string $statement): bool
@@ -321,7 +330,7 @@ class DB
         
         $this->dump();
         
-        return $this->sth->fetch(\PDO::FETCH_ASSOC);
+        return $this->sth->fetch(\PDO::FETCH_ASSOC) ? : NULL;
     }
     
     public function get(): ?array
@@ -356,6 +365,8 @@ class DB
         {
             return false;
         }
+        
+        $this->dump();
         
         return $this->sth->rowCount()
             ? $this->dbh->lastInsertId()
@@ -482,12 +493,17 @@ class DB
         $i = 0;
         foreach ($data as $column => $value)
         {
+            if ($this->attributes && !in_array($column, $this->attributes))
+            {
+                continue;
+            }
+
             if ($value instanceof Expression)
             {
                 $tmp[] = sprintf("%s = %s", $column, $value->getValue());
             } else {
                 $tmp[] = sprintf("%s = :set_$i", $column);
-                $this->param(":set_$i", $value);
+                $this->param(":set_$i", $value != '' ? $value : NULL);
             }
             $i += 1;
         }
