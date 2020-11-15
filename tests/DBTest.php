@@ -9,6 +9,7 @@ class DBTest extends TestCase
     {
         $attributes = array(
             'attributes',
+            'config',
             'connection',
             'data',
             'dbh',
@@ -19,6 +20,7 @@ class DBTest extends TestCase
             'offset',
             'orderBy',
             'params',
+            'pool',
             'rowCount',
             'select',
             'sth',
