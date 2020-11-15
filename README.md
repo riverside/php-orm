@@ -28,17 +28,31 @@ $ php composer.phar install
 ```
 
 ### Configuration
-php-orm expects the following environment variables at local level:
-```php
-<?php
-$_ENV['PHP_ORM_DSN']  = 'mysql:host=localhost;dbname=mydb';
-$_ENV['PHP_ORM_USER'] = 'myuser';
-$_ENV['PHP_ORM_PSWD'] = 'mypswd';
-```
 Include autoload in your project: 
 ```php
-<?php
 require __DIR__ . '/vendor/autoload.php';
+```
+
+Define path to configuration file:
+```php
+DB::config('config/database.php');
+```
+
+config/database.php
+```php
+<?php
+return array(
+    'default' => array(
+        'driver'    => 'mysql',
+        'host'      => 'localhost',
+        'port'      => 3306,
+        'username'  => 'root',
+        'password'  => 'secret',
+        'database'  => 'test',
+        'charset'   => 'utf8mb4',
+        'collation' => 'utf8mb4_general_ci',
+    ),
+);
 ```
 
 ### Models
@@ -52,6 +66,8 @@ class User extends DB
     protected $table = 'users';
     
     protected $attributes = ['id', 'name', 'email'];
+    
+    // protected $connection = 'backup';
     
     public static function factory()
     {
