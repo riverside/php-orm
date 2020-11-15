@@ -66,6 +66,7 @@
                         <li><a href="#db">DB</a>
                             <ul class="nav">
                                 <li><a href="#db-construct">__construct()</a></li>
+                                <li><a href="#db-config">config()</a></li>
                                 <li><a href="#db-count">count()</a></li>
                                 <li><a href="#db-debug">debug()</a></li>
                                 <li><a href="#db-delete">delete()</a></li>
@@ -99,6 +100,29 @@
                                 <li><a href="#expr-toString">__toString()</a></li>
                             </ul>
                         </li>
+                        <li><a href="#cfg">Configuration</a>
+                            <ul class="nav">
+                                <li><a href="#cfg-construct">__construct()</a></li>
+                                <li><a href="#cfg-getCharset">getCharset()</a></li>
+                                <li><a href="#cfg-getCollation">getCollation()</a></li>
+                                <li><a href="#cfg-getDatabase">getDatabase()</a></li>
+                                <li><a href="#cfg-getDriver">getDriver()</a></li>
+                                <li><a href="#cfg-getHost">getHost()</a></li>
+                                <li><a href="#cfg-getPassword">getPassword()</a></li>
+                                <li><a href="#cfg-getPort">getPort()</a></li>
+                                <li><a href="#cfg-getUsername">getUsername()</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#con">Connection</a>
+                            <ul class="nav">
+                                <li><a href="#con-construct">__construct()</a></li>
+                                <li><a href="#con-getDbh">getDbh</a></li>
+                                <li><a href="#con-getDsn">getDsn</a></li>
+                                <li><a href="#con-connect">connect</a></li>
+                                <li><a href="#con-disconnect">disconnect</a></li>
+                                <li><a href="#con-reconnect">reconnect</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
             </div><!-- .col-md-2 -->
@@ -110,6 +134,11 @@
                     <h3 class="h4" id="db-construct">__construct()</h3>
                     <p>Creates an instance of <code>DB</code> class.</p>
                     <pre class="prettyprint">$db = new DB();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-config">config()</h3>
+                    <p>Defines the path to the configuration file.</p>
+                    <pre class="prettyprint">DB::config('config/database.php');</pre>
                 </section>
                 <section>
                     <h3 class="h4" id="db-count">count()</h3>
@@ -260,7 +289,85 @@ $db->where('id', '>', 1);</pre>
                     <p>Returns the value as string.</p>
                     <pre class="prettyprint">echo $expr;</pre>
                 </section>
-
+                <!-- Configuration -->
+                <h2 class="h3" id="cfg">Configuration</h2>
+                <section>
+                    <h3 class="h4" id="cfg-construct">__construct(string $username, string $password, string $database, string $host=null, int $port=null, string $driver=null, string $charset=null, string $collation=null)</h3>
+                    <p>Create an instance of <code>Configuration</code> class.</p>
+                    <pre class="prettyprint">$config = new Configuration('root', 'secret', 'test');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getCharset">getCharset()</h3>
+                    <p>Return the charset.</p>
+                    <pre class="prettyprint">echo $config->getCharset(); // 'utf8mb4'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getCollation">getCollation()</h3>
+                    <p>Return the collation.</p>
+                    <pre class="prettyprint">echo $config->getCollation(); // 'utf8mb4_general_ci'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getDatabase">getDatabase()</h3>
+                    <p>Return the database name.</p>
+                    <pre class="prettyprint">echo $config->getDatabase(); // 'test'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getDriver">getDriver()</h3>
+                    <p>Return the PDO driver.</p>
+                    <pre class="prettyprint">echo $config->getDriver(); // 'mysql'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getHost">getHost()</h3>
+                    <p>Return the host.</p>
+                    <pre class="prettyprint">echo $config->getHost(); // 'localhost'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getPassword">getPassword()</h3>
+                    <p>Return the password.</p>
+                    <pre class="prettyprint">echo $config->getPassword(); // 'secret'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getPort">getPort()</h3>
+                    <p>Return the port.</p>
+                    <pre class="prettyprint">echo $config->getPort(); // 3306</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="cfg-getUsername">getUsername()</h3>
+                    <p>Return the username.</p>
+                    <pre class="prettyprint">echo $config->getUsername(); // 'root'</pre>
+                </section>
+                <!-- Connection -->
+                <h2 class="h3" id="con">Connection</h2>
+                <section>
+                    <h3 class="h4" id="con-construct">__construct(Configuration $configuration)</h3>
+                    <p>Create an instance of <code>Connection</code> class.</p>
+                    <pre class="prettyprint">$connection = new Connection($config);</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="con-getDbh">getDbh()</h3>
+                    <p>Return an instance of <code>Connection</code>.</p>
+                    <pre class="prettyprint">var_dump($connection->getDbh() instanceof \PDO); // true</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="con-getDsn">getDsn()</h3>
+                    <p>Return the Data Source Name (<code>DSN</code>).</p>
+                    <pre class="prettyprint">echo $connection->getDsn(); // 'mysql:host=localhost;dbname=test'</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="con-connect">connect()</h3>
+                    <p>Creates a <code>PDO</code> instance to represent a connection to the requested database.</p>
+                    <pre class="prettyprint">$connection->connect();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="con-disconnect">disconnect()</h3>
+                    <p>Close a previously established connection to the database.</p>
+                    <pre class="prettyprint">$connection->disconnect();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="con-reconnect">reconnect()</h3>
+                    <p>Close the current connection and create a new connection.</p>
+                    <pre class="prettyprint">$connection->reconnect();</pre>
+                </section>
             </div><!-- .col-md-10 -->
         </div><!-- .row -->
     </div><!-- .container -->
