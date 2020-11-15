@@ -5,7 +5,9 @@ class DB
 {
     protected $attributes = array();
 
-    private static $connection = null;
+    private static $config = 'database.php';
+
+    protected $connection = 'default';
 
     private $data = null;
     
@@ -25,6 +27,8 @@ class DB
     
     private $params = array();
 
+    private static $pool = array();
+
     private $rowCount = null;
     
     private $select = null;
@@ -37,7 +41,7 @@ class DB
     
     public function __construct()
     {
-        $this->connect();
+        $this->mount();
     }
 
     protected function buildInsert(array $data, $modifiers=null, $upsert=false): string
@@ -164,28 +168,9 @@ class DB
         return join(' AND ', $tmp);
     }
     
-    protected function connect(): void
-    {
-        if (is_object(self::$connection))
+    public static function config(string $filename)
         {
-            $this->dbh = self::$connection;
-            return;
-        }
-
-        $dsn      = $_ENV['PHP_ORM_DSN'];
-        $user     = $_ENV['PHP_ORM_USER'];
-        $password = $_ENV['PHP_ORM_PSWD'];
-        
-        try {
-            $this->dbh = new \PDO($dsn, $user, $password);
-            $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $this->dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES,true);
-            
-            self::$connection = $this->dbh;
-
-        } catch (\PDOException $e) {
-            echo 'Connection failed: ' . $e->getMessage();
-        }
+        self::$config = $filename;
     }
     
     public function count(): ?int
@@ -395,21 +380,44 @@ class DB
         return $this;
     }
     
-    public function rightJoin(string $table, string $conditions): DB
-    {
-        $this->join[] = array(
-            'type' => 'RIGHT',
-            'table' => $table,
-            'conditions' => $conditions,
-        );
-        
-        return $this;
-    }
-    
     public function limit(int $rowCount=null, int $offset=null): DB
     {
         $this->rowCount = $rowCount;
         $this->offset = $offset;
+        
+        return $this;
+    }
+    
+    protected function mount(): DB
+    {
+        if (array_key_exists($this->connection, self::$pool)
+            && is_object(self::$pool[$this->connection])
+            && self::$pool[$this->connection] instanceof \PDO
+        )
+        {
+            $this->dbh = self::$pool[$this->connection];
+            return $this;
+        }
+
+        $database = include self::$config;
+        if (!isset($database[$this->connection]))
+        {
+            throw new \Exception("Connection not found.");
+        }
+        $opts = $database[$this->connection];
+
+        $configuration = new Configuration(
+            $opts['username'],
+            $opts['password'],
+            $opts['database'],
+            $opts['host'],
+            $opts['port'],
+            $opts['driver'],
+            $opts['charset'],
+            $opts['collation']);
+        $connection = new Connection($configuration);
+        $this->dbh = $connection->getDbh();
+        self::$pool[$this->connection] = $this->dbh;
         
         return $this;
     }
@@ -451,6 +459,17 @@ class DB
         return $this;
     }
     
+    public function rightJoin(string $table, string $conditions): DB
+    {
+        $this->join[] = array(
+            'type' => 'RIGHT',
+            'table' => $table,
+            'conditions' => $conditions,
+        );
+
+        return $this;
+    }
+
     public function select(string $value=null): DB
     {
         $this->select = $value;
