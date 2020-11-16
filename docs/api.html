@@ -66,6 +66,9 @@
                         <li><a href="#db">DB</a>
                             <ul class="nav">
                                 <li><a href="#db-construct">__construct()</a></li>
+                                <li><a href="#db-autoCommit">autoCommit()</a></li>
+                                <li><a href="#db-begin">begin()</a></li>
+                                <li><a href="#db-commit">commit()</a></li>
                                 <li><a href="#db-config">config()</a></li>
                                 <li><a href="#db-count">count()</a></li>
                                 <li><a href="#db-debug">debug()</a></li>
@@ -84,6 +87,7 @@
                                 <li><a href="#db-param">param()</a></li>
                                 <li><a href="#db-raw">raw()</a></li>
                                 <li><a href="#db-reset">reset()</a></li>
+                                <li><a href="#db-rollback">rollback()</a></li>
                                 <li><a href="#db-select">select()</a></li>
                                 <li><a href="#db-table">table()</a></li>
                                 <li><a href="#db-truncate">truncate()</a></li>
@@ -134,6 +138,21 @@
                     <h3 class="h4" id="db-construct">__construct()</h3>
                     <p>Creates an instance of <code>DB</code> class.</p>
                     <pre class="prettyprint">$db = new DB();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-autoCommit">autoCommit(int $value)</h3>
+                    <p>Disables or enables the default autocommit mode for the current connection.</p>
+                    <pre class="prettyprint">$db->autoCommit(1);</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-begin">begin()</h3>
+                    <p>Begin a new transaction.</p>
+                    <pre class="prettyprint">$db->begin();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-commit">commit()</h3>
+                    <p>Commits the current transaction, making its changes permanent.</p>
+                    <pre class="prettyprint">$db->commit();</pre>
                 </section>
                 <section>
                     <h3 class="h4" id="db-config">config()</h3>
@@ -230,6 +249,11 @@ $db->insert(['name'=>'John'], 'IGNORE');</pre>
                     <h3 class="h4" id="db-reset">reset()</h3>
                     <p>Reset all query builder's clauses.</p>
                     <pre class="prettyprint">$db->reset();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-rollback">rollback()</h3>
+                    <p>Rolls back the current transaction, canceling its changes.</p>
+                    <pre class="prettyprint">$db->rollback();</pre>
                 </section>
                 <section>
                     <h3 class="h4" id="db-select">select(string $value=null)</h3>
