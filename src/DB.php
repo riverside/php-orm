@@ -44,6 +44,32 @@ class DB
         $this->mount();
     }
 
+    public function autoCommit(int $value): DB
+    {
+        $statement = sprintf("SET AUTOCOMMIT = %u;", $value);
+        if (!$this->fire($statement))
+        {
+            return false;
+        }
+
+        $this->dump();
+
+        return $this;
+    }
+
+    public function begin(): DB
+    {
+        $statement = "BEGIN;";
+        if (!$this->fire($statement))
+        {
+            return false;
+        }
+
+        $this->dump();
+
+        return $this;
+    }
+
     protected function buildInsert(array $data, $modifiers=null, $upsert=false): string
     {
         if ($modifiers)
@@ -167,7 +193,20 @@ class DB
         
         return join(' AND ', $tmp);
     }
-    
+
+    public function commit(): DB
+    {
+        $statement = "COMMIT;";
+        if (!$this->fire($statement))
+        {
+            return false;
+        }
+
+        $this->dump();
+
+        return $this;
+    }
+
     public static function config(string $filename)
         {
         self::$config = $filename;
@@ -466,6 +505,19 @@ class DB
             'table' => $table,
             'conditions' => $conditions,
         );
+
+        return $this;
+    }
+
+    public function rollback(): DB
+    {
+        $statement = "ROLLBACK;";
+        if (!$this->fire($statement))
+        {
+            return false;
+        }
+
+        $this->dump();
 
         return $this;
     }
