@@ -86,8 +86,12 @@
                                 <li><a href="#db-orderBy">orderBy()</a></li>
                                 <li><a href="#db-param">param()</a></li>
                                 <li><a href="#db-raw">raw()</a></li>
+                                <li><a href="#db-releaseSavepoint">releaseSavepoint()</a></li>
+                                <li><a href="#db-replace">replace()</a></li>
                                 <li><a href="#db-reset">reset()</a></li>
                                 <li><a href="#db-rollback">rollback()</a></li>
+                                <li><a href="#db-rollbackToSavepoint">rollbackToSavepoint()</a></li>
+                                <li><a href="#db-savepoint">savepoint()</a></li>
                                 <li><a href="#db-select">select()</a></li>
                                 <li><a href="#db-table">table()</a></li>
                                 <li><a href="#db-truncate">truncate()</a></li>
@@ -246,6 +250,18 @@ $db->insert(['name'=>'John'], 'IGNORE');</pre>
                     <pre class="prettyprint">DB::raw('NOW()');</pre>
                 </section>
                 <section>
+                    <h3 class="h4" id="db-releaseSavepoint">releaseSavepoint(string $identifier)</h3>
+                    <p>Removes the named save point from the set of save points of the current transaction.
+                        No commit or rollback occurs.</p>
+                    <pre class="prettyprint">$db->releaseSavepoint('phase-1');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-replace">replace(array $data, $modifiers = null)</h3>
+                    <p>Replace a record in the database. Available modifiers are: <code>LOW_PRIORITY</code>, <code>DELAYED</code>.</p>
+                    <pre class="prettyprint">$db->replace(['email' => 'john@domain.com']);
+$db->replace(['email' => 'john@domain.com'], 'DELAYED');</pre>
+                </section>
+                <section>
                     <h3 class="h4" id="db-reset">reset()</h3>
                     <p>Reset all query builder's clauses.</p>
                     <pre class="prettyprint">$db->reset();</pre>
@@ -254,6 +270,16 @@ $db->insert(['name'=>'John'], 'IGNORE');</pre>
                     <h3 class="h4" id="db-rollback">rollback()</h3>
                     <p>Rolls back the current transaction, canceling its changes.</p>
                     <pre class="prettyprint">$db->rollback();</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-rollbackToSavepoint">rollbackToSavepoint(string $identifier)</h3>
+                    <p>Rolls back a transaction to the named save point.</p>
+                    <pre class="prettyprint">$db->rollbackToSavepoint('phase-1');</pre>
+                </section>
+                <section>
+                    <h3 class="h4" id="db-savepoint">savepoint(string $identifier)</h3>
+                    <p>Sets a named transaction save point with a name of identifier.</p>
+                    <pre class="prettyprint">$db->savepoint('phase-1');</pre>
                 </section>
                 <section>
                     <h3 class="h4" id="db-select">select(string $value=null)</h3>
