@@ -92,8 +92,8 @@ $db->table('users')->get();
 ### API
 - [DB][1]
 - [Expression][2]
-- [Configuration] [3]
-- [Connection] [4]
+- [Configuration][3]
+- [Connection][4]
 
 [1]: https://riverside.github.io/php-orm/api.html#db
 [2]: https://riverside.github.io/php-orm/api.html#expr
