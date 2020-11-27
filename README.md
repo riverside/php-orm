@@ -92,9 +92,13 @@ $db->table('users')->get();
 ### API
 - [DB][1]
 - [Expression][2]
+- [Configuration] [3]
+- [Connection] [4]
 
 [1]: https://riverside.github.io/php-orm/api.html#db
 [2]: https://riverside.github.io/php-orm/api.html#expr
+[3]: https://riverside.github.io/php-orm/api.html#cfg
+[4]: https://riverside.github.io/php-orm/api.html#con
 [x1]: https://api.travis-ci.org/riverside/php-orm.svg
 [y1]: https://travis-ci.org/riverside/php-orm
 [x2]: https://poser.pugx.org/riverside/php-orm/v/stable
