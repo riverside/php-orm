@@ -39,8 +39,7 @@ class DB
 
     private $where = array();
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->mount();
     }
 
@@ -88,6 +87,10 @@ class DB
         foreach ($data as $column => $value) {
             if ($this->attributes && !in_array($column, $this->attributes)) {
                 continue;
+            }
+
+            if ($value == "") {
+                $value = self::raw('NULL');
             }
 
             if ($value instanceof Expression) {
@@ -190,8 +193,7 @@ class DB
         return $this;
     }
 
-    public static function config(string $filename)
-    {
+    public static function config(string $filename) {
         self::$config = $filename;
     }
 
@@ -275,8 +277,7 @@ class DB
         return $this->sth->rowCount();
     }
 
-    protected function dump()
-    {
+    protected function dump() {
         if ($this->debug) {
             echo '<pre>';
             $this->sth->debugDumpParams();
