@@ -1,9 +1,9 @@
 # php-orm
 PHP micro-ORM and query builder.
 
-| Build | Stable | License |
-| ----- | ------ | ------- |
-| [![Build Status][x1]][y1] | [![Latest Stable Version][x2]][y2] | [![License][x3]][y3] |
+| Build | GitHub pages | Stable | License |
+| ----- | ------------ | ------ | ------- |
+| [![CI][x1]][y1] | [![pages-build-deployment][x4]][y4] | [![Latest Stable Version][x2]][y2] | [![License][x3]][y3] |
 
 ### Requirements
 - PHP >= 7.1
@@ -99,9 +99,11 @@ $db->table('users')->get();
 [2]: https://riverside.github.io/php-orm/api.html#expr
 [3]: https://riverside.github.io/php-orm/api.html#cfg
 [4]: https://riverside.github.io/php-orm/api.html#con
-[x1]: https://api.travis-ci.org/riverside/php-orm.svg
-[y1]: https://travis-ci.org/riverside/php-orm
+[x1]: https://github.com/riverside/php-orm/actions/workflows/test.yml/badge.svg
+[y1]: https://github.com/riverside/php-orm/actions/workflows/test.yml
 [x2]: https://poser.pugx.org/riverside/php-orm/v/stable
 [y2]: https://packagist.org/packages/riverside/php-orm
 [x3]: https://poser.pugx.org/riverside/php-orm/license
 [y3]: https://packagist.org/packages/riverside/php-orm
+[x4]: https://github.com/riverside/php-orm/actions/workflows/pages/pages-build-deployment/badge.svg
+[y4]: https://github.com/riverside/php-orm/actions/workflows/pages/pages-build-deployment
