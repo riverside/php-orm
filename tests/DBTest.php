@@ -1,7 +1,8 @@
 <?php
-namespace PhpOrm;
+namespace PhpOrm\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PhpOrm\DB;
 
 class DBTest extends TestCase
 {

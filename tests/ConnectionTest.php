@@ -1,7 +1,9 @@
 <?php
-namespace PhpOrm;
+namespace PhpOrm\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PhpOrm\Connection;
+use PhpOrm\Configuration;
 
 class ConnectionTest extends TestCase
 {
