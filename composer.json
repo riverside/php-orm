@@ -26,6 +26,11 @@
             "PhpOrm\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "PhpOrm\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "test": "vendor/bin/phpunit"
     }
