@@ -11,6 +11,9 @@ class DB
 
     private $data = null;
 
+    /**
+     * @var \PDO
+     */
     private $dbh = null;
 
     private $debug = false;
@@ -33,12 +36,20 @@ class DB
 
     private $select = null;
 
+    /**
+     * @var \PDOStatement
+     */
     private $sth = null;
 
     protected $table = null;
 
     private $where = array();
 
+    /**
+     * DB constructor.
+     *
+     * @throws \Exception
+     */
     public function __construct() {
         $this->mount();
     }
@@ -392,6 +403,10 @@ class DB
         return $this;
     }
 
+    /**
+     * @return DB
+     * @throws \Exception
+     */
     protected function mount(): DB
     {
         if (array_key_exists($this->connection, self::$pool)
