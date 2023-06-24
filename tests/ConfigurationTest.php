@@ -6,6 +6,20 @@ use PhpOrm\Configuration;
 
 class ConfigurationTest extends TestCase
 {
+    public static function getConfiguration()
+    {
+        return new Configuration(
+            'root',
+            'secret',
+            'test',
+            'localhost',
+            3306,
+            'mysql',
+            'utf8mb4',
+            'utf8mb4_general_ci'
+        );
+    }
+
     public function testAttributes()
     {
         $attributes = array(
@@ -25,16 +39,7 @@ class ConfigurationTest extends TestCase
 
     public function testConfig()
     {
-        $configuration = new Configuration(
-            'root',
-            'secret',
-            'test',
-            'localhost',
-            3306,
-            'mysql',
-            'utf8mb4',
-            'utf8mb4_general_ci'
-        );
+        $configuration = self::getConfiguration();
 
         $this->assertSame('utf8mb4', $configuration->getCharset());
         $this->assertSame('utf8mb4_general_ci', $configuration->getCollation());
