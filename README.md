@@ -55,6 +55,15 @@ return array(
 );
 ```
 
+### Database
+Table: users
+
+| Name | Type | Collation | Attributes | Null| Extra |
+| --- | --- | --- | --- | --- | --- |
+| id | int(10) | | UNSIGNED | No | AUTO_INCREMENT |
+| name | varchar(255) | utf8mb4_general_ci | | Yes | |
+| email | varchar(255) | utf8mb4_general_ci | | Yes | |
+
 ### Models
 Define your own models:
 ```php
