@@ -3,22 +3,37 @@ namespace PhpOrm;
 
 class Connection
 {
+    /**
+     * @var Configuration
+     */
     private $configuration;
 
+    /**
+     * @var \PDO|null
+     */
     private $dbh;
 
+    /**
+     * Connection constructor.
+     * @param Configuration $configuration
+     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    public function getDbh(): \PDO
+    /**
+     * @return \PDO|null
+     * @throws \Exception
+     */
+    public function getDbh()
     {
-        $this->connect();
-
         return $this->dbh;
     }
 
+    /**
+     * @return string
+     */
     public function getDsn(): string
     {
         $dsn = "";
@@ -82,6 +97,10 @@ class Connection
         return $dsn;
     }
 
+    /**
+     * @return Connection
+     * @throws \Exception
+     */
     public function connect(): Connection
     {
         try {
@@ -90,12 +109,15 @@ class Connection
             $this->dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES,true);
 
         } catch (\PDOException $e) {
-            echo 'Connection failed: ' . $e->getMessage();
+            throw new \Exception($e->getMessage(), $e->getCode());
         }
 
         return $this;
     }
 
+    /**
+     * @return Connection
+     */
     public function disconnect(): Connection
     {
         $this->dbh = null;
@@ -103,6 +125,10 @@ class Connection
         return $this;
     }
 
+    /**
+     * @return Connection
+     * @throws \Exception
+     */
     public function reconnect(): Connection
     {
         $this->disconnect();
