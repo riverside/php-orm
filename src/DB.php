@@ -54,30 +54,41 @@ class DB
         $this->mount();
     }
 
+    /**
+     * @param int $value
+     * @return DB
+     * @throws \Exception
+     */
     public function autoCommit(int $value): DB
     {
         $statement = sprintf("SET AUTOCOMMIT = %u;", $value);
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @return DB
+     * @throws \Exception
+     */
     public function begin(): DB
     {
         $statement = "BEGIN;";
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @param array $data
+     * @param null $modifiers
+     * @param null $type
+     * @return string
+     */
     protected function buildInsert(array $data, $modifiers = null, $type = null): string
     {
         if ($modifiers) {
@@ -122,6 +133,9 @@ class DB
         return $statement;
     }
 
+    /**
+     * @return string
+     */
     protected function buildJoin(): string
     {
         $tmp = array();
@@ -132,6 +146,9 @@ class DB
         return join("\n", $tmp);
     }
 
+    /**
+     * @return string
+     */
     protected function buildSelect(): string
     {
         $statement = "SELECT " . ($this->select ? $this->select : '*');
@@ -171,6 +188,9 @@ class DB
         return $statement;
     }
 
+    /**
+     * @return string
+     */
     protected function buildWhere(): string
     {
         $tmp = array();
@@ -192,22 +212,31 @@ class DB
         return join(' AND ', $tmp);
     }
 
+    /**
+     * @return DB
+     * @throws \Exception
+     */
     public function commit(): DB
     {
         $statement = "COMMIT;";
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @param string $filename
+     */
     public static function config(string $filename) {
         self::$config = $filename;
     }
 
+    /**
+     * @return int|null
+     * @throws \Exception
+     */
     public function count(): ?int
     {
         $statement = "SELECT COUNT(*) AS cnt";
@@ -236,15 +265,17 @@ class DB
 
         $statement .= " LIMIT 1;";
 
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this->sth->fetchColumn();
     }
 
+    /**
+     * @param bool $value
+     * @return DB
+     */
     public function debug(bool $value): DB
     {
         $this->debug = $value;
@@ -252,6 +283,11 @@ class DB
         return $this;
     }
 
+    /**
+     * @param null $modifiers
+     * @return int|null
+     * @throws \Exception
+     */
     public function delete($modifiers = null): ?int
     {
         if ($modifiers) {
@@ -279,16 +315,15 @@ class DB
 
         $statement .= ";";
 
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this->sth->rowCount();
     }
 
-    protected function dump() {
+    protected function dump()
+    {
         if ($this->debug) {
             echo '<pre>';
             $this->sth->debugDumpParams();
@@ -296,56 +331,72 @@ class DB
         }
     }
 
+    /**
+     * @param $value
+     * @return array|null
+     * @throws \Exception
+     */
     public function find($value): ?array
     {
         $this->where($this->table . '.id', $value);
         $this->limit(1, 0);
 
-        if (!$this->fire($this->buildSelect())) {
-            return false;
-        }
+        $this->fire($this->buildSelect());
 
         $this->dump();
 
         return $this->sth->fetch(\PDO::FETCH_ASSOC) ?: NULL;
     }
 
+    /**
+     * @param string $statement
+     * @return bool
+     * @throws \Exception
+     */
     protected function fire(string $statement): bool
     {
         $this->sth = $this->dbh->prepare($statement);
         if (!$this->sth) {
-            return false;
+            throw new \Exception('Preparing statement failed.');
         }
 
         if (!$this->sth->execute($this->params)) {
-            return false;
+            throw new \Exception('Executing statement failed.');
         }
 
         return true;
     }
 
+    /**
+     * @return array|null
+     * @throws \Exception
+     */
     public function first(): ?array
     {
-        if (!$this->fire($this->buildSelect())) {
-            return false;
-        }
+        $this->fire($this->buildSelect());
 
         $this->dump();
 
         return $this->sth->fetch(\PDO::FETCH_ASSOC) ?: NULL;
     }
 
+    /**
+     * @return array|null
+     * @throws \Exception
+     */
     public function get(): ?array
     {
-        if (!$this->fire($this->buildSelect())) {
-            return false;
-        }
+        $this->fire($this->buildSelect());
 
         $this->dump();
 
         return $this->sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param string|null $value
+     * @return DB
+     */
     public function groupBy(string $value = null): DB
     {
         $this->groupBy = $value;
@@ -353,6 +404,10 @@ class DB
         return $this;
     }
 
+    /**
+     * @param string|null $value
+     * @return DB
+     */
     public function having(string $value = null): DB
     {
         $this->having = $value;
@@ -360,11 +415,15 @@ class DB
         return $this;
     }
 
+    /**
+     * @param array $data
+     * @param null $modifiers
+     * @return int|null
+     * @throws \Exception
+     */
     public function insert(array $data, $modifiers = null): ?int
     {
-        if (!$this->fire($this->buildInsert($data, $modifiers))) {
-            return false;
-        }
+        $this->fire($this->buildInsert($data, $modifiers));
 
         $this->dump();
 
@@ -373,6 +432,11 @@ class DB
             : false;
     }
 
+    /**
+     * @param string $table
+     * @param string $conditions
+     * @return DB
+     */
     public function join(string $table, string $conditions): DB
     {
         $this->join[] = array(
@@ -384,6 +448,11 @@ class DB
         return $this;
     }
 
+    /**
+     * @param string $table
+     * @param string $conditions
+     * @return DB
+     */
     public function leftJoin(string $table, string $conditions): DB
     {
         $this->join[] = array(
@@ -395,6 +464,11 @@ class DB
         return $this;
     }
 
+    /**
+     * @param int|null $rowCount
+     * @param int|null $offset
+     * @return DB
+     */
     public function limit(int $rowCount = null, int $offset = null): DB
     {
         $this->rowCount = $rowCount;
@@ -417,11 +491,23 @@ class DB
             return $this;
         }
 
+        if (!is_file(self::$config))
+        {
+            throw new \Exception("File '".self::$config."' not found.");
+        }
         $database = include self::$config;
-        if (!isset($database[$this->connection])) {
+        if (!isset($database[$this->connection]))
+        {
             throw new \Exception("Connection not found.");
         }
         $opts = $database[$this->connection];
+        foreach (array('username', 'password', 'database', 'host', 'port', 'driver', 'charset', 'collation') as $key)
+        {
+            if (!array_key_exists($key, $opts))
+            {
+                throw new \Exception("The '$key' index was not found in config.");
+            }
+        }
 
         $configuration = new Configuration(
             $opts['username'],
@@ -433,12 +519,17 @@ class DB
             $opts['charset'],
             $opts['collation']);
         $connection = new Connection($configuration);
+        $connection->connect();
         $this->dbh = $connection->getDbh();
         self::$pool[$this->connection] = $this->dbh;
 
         return $this;
     }
 
+    /**
+     * @param string|null $value
+     * @return DB
+     */
     public function orderBy(string $value = null): DB
     {
         $this->orderBy = $value;
@@ -446,6 +537,11 @@ class DB
         return $this;
     }
 
+    /**
+     * @param string $key
+     * @param $value
+     * @return DB
+     */
     public function param(string $key, $value): DB
     {
         $this->params[$key] = $value;
@@ -453,29 +549,39 @@ class DB
         return $this;
     }
 
+    /**
+     * @param string $value
+     * @return Expression
+     */
     public static function raw(string $value): Expression
     {
         return new Expression($value);
     }
 
+    /**
+     * @param string $identifier
+     * @return DB
+     * @throws \Exception
+     */
     public function releaseSavepoint(string $identifier): DB
     {
         $statement = sprintf("RELEASE SAVEPOINT %s;", $identifier);
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @param array $data
+     * @param null $modifiers
+     * @return int|null
+     * @throws \Exception
+     */
     public function replace(array $data, $modifiers = null): ?int
     {
-        if (!$this->fire($this->buildInsert($data, $modifiers, 'replace')))
-        {
-            return false;
-        }
+        $this->fire($this->buildInsert($data, $modifiers, 'replace'));
 
         $this->dump();
 
@@ -484,6 +590,9 @@ class DB
             : false;
     }
 
+    /**
+     * @return DB
+     */
     public function reset(): DB
     {
         $this->data = null;
@@ -502,6 +611,11 @@ class DB
         return $this;
     }
 
+    /**
+     * @param string $table
+     * @param string $conditions
+     * @return DB
+     */
     public function rightJoin(string $table, string $conditions): DB
     {
         $this->join[] = array(
@@ -513,42 +627,54 @@ class DB
         return $this;
     }
 
+    /**
+     * @return DB
+     * @throws \Exception
+     */
     public function rollback(): DB
     {
         $statement = "ROLLBACK;";
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @param string $identifier
+     * @return DB
+     * @throws \Exception
+     */
     public function rollbackToSavepoint(string $identifier): DB
     {
         $statement = sprintf("ROLLBACK TO SAVEPOINT %s;", $identifier);
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @param string $identifier
+     * @return DB
+     * @throws \Exception
+     */
     public function savepoint(string $identifier): DB
     {
         $statement = sprintf("SAVEPOINT %s;", $identifier);
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this;
     }
 
+    /**
+     * @param string|null $value
+     * @return DB
+     */
     public function select(string $value = null): DB
     {
         $this->select = $value;
@@ -556,6 +682,10 @@ class DB
         return $this;
     }
 
+    /**
+     * @param string $value
+     * @return DB
+     */
     public function table(string $value): DB
     {
         $this->table = $value;
@@ -563,6 +693,9 @@ class DB
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function truncate(): bool
     {
         $statement = sprintf("TRUNCATE TABLE %s;", $this->table);
@@ -572,6 +705,12 @@ class DB
         return ($result !== false ? true : false);
     }
 
+    /**
+     * @param array $data
+     * @param null $modifiers
+     * @return int
+     * @throws \Exception
+     */
     public function update(array $data, $modifiers = null): int
     {
         if ($modifiers) {
@@ -617,26 +756,33 @@ class DB
 
         $statement .= ";";
 
-        if (!$this->fire($statement)) {
-            return false;
-        }
+        $this->fire($statement);
 
         $this->dump();
 
         return $this->sth->rowCount();
     }
 
+    /**
+     * @param array $data
+     * @param null $modifiers
+     * @return int|null
+     * @throws \Exception
+     */
     public function upsert(array $data, $modifiers = null): ?int
     {
-        if (!$this->fire($this->buildInsert($data, $modifiers, 'upsert'))) {
-            return false;
-        }
+        $this->fire($this->buildInsert($data, $modifiers, 'upsert'));
 
         return $this->sth->rowCount()
             ? $this->dbh->lastInsertId()
             : false;
     }
 
+    /**
+     * @param string $column
+     * @return string
+     * @throws \Exception
+     */
     public function value(string $column): string
     {
         $row = $this->first();
@@ -647,6 +793,9 @@ class DB
         return array_key_exists($column, $row) ? $row[$column] : NULL;
     }
 
+    /**
+     * @return DB
+     */
     public function where(): DB
     {
         switch (func_num_args()) {
