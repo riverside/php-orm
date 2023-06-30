@@ -1,6 +1,11 @@
 <?php
 namespace PhpOrm;
 
+/**
+ * Class DB
+ *
+ * @package PhpOrm
+ */
 class DB
 {
     protected $attributes = array();
@@ -55,6 +60,8 @@ class DB
     }
 
     /**
+     * Disables or enables the default autocommit mode for the current connection
+     *
      * @param int $value
      * @return DB
      * @throws \Exception
@@ -70,6 +77,8 @@ class DB
     }
 
     /**
+     * Begin a new transaction
+     *
      * @return DB
      * @throws \Exception
      */
@@ -213,6 +222,8 @@ class DB
     }
 
     /**
+     * Commits the current transaction, making its changes permanent
+     *
      * @return DB
      * @throws \Exception
      */
@@ -559,6 +570,8 @@ class DB
     }
 
     /**
+     * Removes the named save point from the set of save points of the current transaction. No commit or rollback occurs.
+     *
      * @param string $identifier
      * @return DB
      * @throws \Exception
@@ -628,6 +641,8 @@ class DB
     }
 
     /**
+     * Rolls back the current transaction, canceling its changes
+     *
      * @return DB
      * @throws \Exception
      */
@@ -642,6 +657,8 @@ class DB
     }
 
     /**
+     * Rolls back a transaction to the named save point
+     *
      * @param string $identifier
      * @return DB
      * @throws \Exception
@@ -657,6 +674,8 @@ class DB
     }
 
     /**
+     * Sets a named transaction save point with a name of $identifier
+     *
      * @param string $identifier
      * @return DB
      * @throws \Exception
@@ -694,6 +713,8 @@ class DB
     }
 
     /**
+     * Empties a table completely
+     *
      * @return bool
      */
     public function truncate(): bool

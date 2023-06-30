@@ -1,20 +1,30 @@
 <?php
 namespace PhpOrm;
 
+/**
+ * Class Connection
+ *
+ * @package PhpOrm
+ */
 class Connection
 {
     /**
+     * Configuration instance
+     *
      * @var Configuration
      */
     private $configuration;
 
     /**
+     * PDO instance
+     *
      * @var \PDO|null
      */
     private $dbh;
 
     /**
      * Connection constructor.
+     *
      * @param Configuration $configuration
      */
     public function __construct(Configuration $configuration)
@@ -23,6 +33,8 @@ class Connection
     }
 
     /**
+     * Gets PDO instance
+     *
      * @return \PDO|null
      * @throws \Exception
      */
@@ -32,6 +44,8 @@ class Connection
     }
 
     /**
+     * Gets the Data Source Name (DSN)
+     *
      * @return string
      */
     public function getDsn(): string
@@ -98,6 +112,8 @@ class Connection
     }
 
     /**
+     * Create a PDO instance
+     *
      * @return Connection
      * @throws \Exception
      */
@@ -116,6 +132,8 @@ class Connection
     }
 
     /**
+     * Destroy the PDO instance
+     *
      * @return Connection
      */
     public function disconnect(): Connection
@@ -126,6 +144,8 @@ class Connection
     }
 
     /**
+     * Destroys, then creates a new PDO instance
+     *
      * @return Connection
      * @throws \Exception
      */
