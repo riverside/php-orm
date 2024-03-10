@@ -255,7 +255,7 @@ class DB
         $statement .= " FROM " . $this->table;
 
         if ($this->join) {
-            $statement .= "JOIN " . $this->join;
+            $statement .= " " . $this->buildJoin();
         }
 
         if ($this->where) {
