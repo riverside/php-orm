@@ -18,8 +18,7 @@ class ExpressionTest extends TestCase
 
     public function testString()
     {
-        $stub = $this->createMock(Expression::class);
-        $stub->method('__toString')->willReturn('string');
-        $this->assertEquals('string', (string) $stub);
+        $expression = new Expression('string');
+        $this->assertEquals('string', (string) $expression);
     }
 }

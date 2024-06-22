@@ -12,7 +12,6 @@
     <meta name="twitter:url" content="https://riverside.github.io/php-orm/">
     <meta name="twitter:site" content="@zino_ui">
     <meta name="twitter:creator" content="@DimitarIvanov">
-    <meta name="twitter:domain" content="zinoui.com">
     <meta property="og:title" content="PHP ORM">
     <meta property="og:site_name" content="Zino UI">
     <meta property="og:url" content="https://riverside.github.io/php-orm/">
@@ -106,6 +105,12 @@
                                 <li><a href="#expr-construct">__construct()</a></li>
                                 <li><a href="#expr-getValue">getValue()</a></li>
                                 <li><a href="#expr-toString">__toString()</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#except">Exception</a></li>
+                        <li><a href="#base">Base</a>
+                            <ul class="nav">
+                                <li><a href="#base-throwException">throwException()</a></li>
                             </ul>
                         </li>
                         <li><a href="#cfg">Configuration</a>
@@ -338,6 +343,15 @@ $db->where('id', '>', 1);</pre>
                     <h3 class="h4" id="expr-toString">__toString()</h3>
                     <p>Returns the value as string.</p>
                     <pre class="prettyprint">echo $expr;</pre>
+                </section>
+                <!-- Exception -->
+                <h2 class="h3" id="except">Exception</h2>
+                <!-- Base -->
+                <h2 class="h3" id="base">Base</h2>
+                <section>
+                    <h3 class="h4" id="base-throwException">throwException(string $message, int $code=null, \Throwable $previous=null)</h3>
+                    <p>Throws an exception.</p>
+                    <pre class="prettyprint">$this->throwException('This is an exception');</pre>
                 </section>
                 <!-- Configuration -->
                 <h2 class="h3" id="cfg">Configuration</h2>

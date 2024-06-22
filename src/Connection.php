@@ -6,7 +6,7 @@ namespace PhpOrm;
  *
  * @package PhpOrm
  */
-class Connection
+class Connection extends Base
 {
     /**
      * Configuration instance
@@ -36,7 +36,6 @@ class Connection
      * Gets PDO instance
      *
      * @return \PDO|null
-     * @throws \Exception
      */
     public function getDbh()
     {
@@ -115,7 +114,7 @@ class Connection
      * Create a PDO instance
      *
      * @return Connection
-     * @throws \Exception
+     * @throws Exception
      */
     public function connect(): Connection
     {
@@ -125,7 +124,7 @@ class Connection
             $this->dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES,true);
 
         } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage(), $e->getCode());
+            $this->throwException($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
 
         return $this;
@@ -147,7 +146,7 @@ class Connection
      * Destroys, then creates a new PDO instance
      *
      * @return Connection
-     * @throws \Exception
+     * @throws Exception
      */
     public function reconnect(): Connection
     {

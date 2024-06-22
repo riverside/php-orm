@@ -2,15 +2,15 @@
     "name": "riverside/php-orm",
     "description": "PHP ORM micro-library and query builder",
     "type": "library",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "keywords": ["php", "orm", "pdo", "mysql", "database"],
     "homepage": "https://github.com/riverside/php-orm",
     "license": "MIT",
     "authors": [
         {
             "name": "Dimitar Ivanov",
-            "email": "info@zinoui.com",
-            "homepage": "https://zinoui.com",
+            "email": "biggie@abv.bg",
+            "homepage": "https://github.com/riverside",
             "role": "Developer"
         }
     ],

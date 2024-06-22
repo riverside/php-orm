@@ -6,7 +6,7 @@ namespace PhpOrm;
  *
  * @package PhpOrm
  */
-class DB
+class DB extends Base
 {
     protected $attributes = array();
 
@@ -53,7 +53,7 @@ class DB
     /**
      * DB constructor.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct() {
         $this->mount();
@@ -64,7 +64,7 @@ class DB
      *
      * @param int $value
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function autoCommit(int $value): DB
     {
@@ -80,7 +80,7 @@ class DB
      * Begin a new transaction
      *
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function begin(): DB
     {
@@ -225,7 +225,7 @@ class DB
      * Commits the current transaction, making its changes permanent
      *
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function commit(): DB
     {
@@ -246,7 +246,7 @@ class DB
 
     /**
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function count(): ?int
     {
@@ -297,7 +297,7 @@ class DB
     /**
      * @param null $modifiers
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete($modifiers = null): ?int
     {
@@ -345,7 +345,7 @@ class DB
     /**
      * @param $value
      * @return array|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function find($value): ?array
     {
@@ -362,17 +362,15 @@ class DB
     /**
      * @param string $statement
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fire(string $statement): bool
     {
+        try {
         $this->sth = $this->dbh->prepare($statement);
-        if (!$this->sth) {
-            throw new \Exception('Preparing statement failed.');
-        }
-
-        if (!$this->sth->execute($this->params)) {
-            throw new \Exception('Executing statement failed.');
+            return $this->sth->execute($this->params);
+        } catch (\PDOException $e) {
+            $this->throwException($e->getMessage());
         }
 
         return true;
@@ -380,7 +378,7 @@ class DB
 
     /**
      * @return array|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function first(): ?array
     {
@@ -393,7 +391,7 @@ class DB
 
     /**
      * @return array|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function get(): ?array
     {
@@ -430,7 +428,7 @@ class DB
      * @param array $data
      * @param null $modifiers
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function insert(array $data, $modifiers = null): ?int
     {
@@ -490,7 +488,7 @@ class DB
 
     /**
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     protected function mount(): DB
     {
@@ -504,19 +502,19 @@ class DB
 
         if (!is_file(self::$config))
         {
-            throw new \Exception("File '".self::$config."' not found.");
+            $this->throwException("File '".self::$config."' not found.");
         }
         $database = include self::$config;
         if (!isset($database[$this->connection]))
         {
-            throw new \Exception("Connection not found.");
+            $this->throwException("Connection not found.");
         }
         $opts = $database[$this->connection];
         foreach (array('username', 'password', 'database', 'host', 'port', 'driver', 'charset', 'collation') as $key)
         {
             if (!array_key_exists($key, $opts))
             {
-                throw new \Exception("The '$key' index was not found in config.");
+                $this->throwException("The '$key' index was not found in config.");
             }
         }
 
@@ -574,7 +572,7 @@ class DB
      *
      * @param string $identifier
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function releaseSavepoint(string $identifier): DB
     {
@@ -590,7 +588,7 @@ class DB
      * @param array $data
      * @param null $modifiers
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function replace(array $data, $modifiers = null): ?int
     {
@@ -644,7 +642,7 @@ class DB
      * Rolls back the current transaction, canceling its changes
      *
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function rollback(): DB
     {
@@ -661,7 +659,7 @@ class DB
      *
      * @param string $identifier
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function rollbackToSavepoint(string $identifier): DB
     {
@@ -678,7 +676,7 @@ class DB
      *
      * @param string $identifier
      * @return DB
-     * @throws \Exception
+     * @throws Exception
      */
     public function savepoint(string $identifier): DB
     {
@@ -730,7 +728,7 @@ class DB
      * @param array $data
      * @param null $modifiers
      * @return int
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(array $data, $modifiers = null): int
     {
@@ -788,7 +786,7 @@ class DB
      * @param array $data
      * @param null $modifiers
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function upsert(array $data, $modifiers = null): ?int
     {
@@ -802,7 +800,7 @@ class DB
     /**
      * @param string $column
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function value(string $column): string
     {
