@@ -7,7 +7,8 @@ PHP micro-ORM and query builder.
 
 ### Requirements
 - PHP >= 7.1
-- PDO extension
+- PHP extensions:
+  - PDO (`ext-pdo`)
 
 ### Installation
 If Composer is not installed on your system yet, you may go ahead and install it using this command line:
