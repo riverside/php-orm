@@ -19,7 +19,7 @@ Next, add the following require entry to the <code>composer.json</code> file in 
 ```json
 {
     "require" : {
-        "riverside/php-orm" : "*"
+        "riverside/php-orm" : "^2.0"
     }
 }
 ```
@@ -34,30 +34,26 @@ Include autoload in your project:
 require __DIR__ . '/vendor/autoload.php';
 ```
 
-Define path to configuration file:
-```php
-DB::config('config/database.php');
-```
-
-config/database.php
+Configure database credentials by setting up the following environment variables: 
+`USERNAME`, `PASSWORD`, `DATABASE`, `HOST`, `PORT`, `DRIVER`, `CHARSET`, `COLLATION`. They must be 
+prefixed with `$connection` property value, part of your model, in capital letters and underscore. The default value of `$connection` 
+property is 'default'. For example:
 ```php
 <?php
-return array(
-    'default' => array(
-        'driver'    => 'mysql',
-        'host'      => 'localhost',
-        'port'      => 3306,
-        'username'  => 'root',
-        'password'  => 'secret',
-        'database'  => 'test',
-        'charset'   => 'utf8mb4',
-        'collation' => 'utf8mb4_general_ci',
-    ),
-);
+putenv("DEFAULT_USERNAME=your_username");
+putenv("DEFAULT_PASSWORD=your_password");
+putenv("DEFAULT_DATABASE=your_database");
+putenv("DEFAULT_HOST=localhost");
+putenv("DEFAULT_PORT=3306");
+putenv("DEFAULT_DRIVER=mysql");
+putenv("DEFAULT_CHARSET=utf8mb4");
+putenv("DEFAULT_COLLATION=utf8mb4_general_ci");
 ```
+### Drivers
+The following drivers are supported: `mysql`, `oci`, `firebird`, `pgsql`, `sqlite`, `sybase`, `mssql`, `dblib`, `cubrid`, `4D`.
 
 ### Database
-Table: users
+Table: **users**
 
 | Name | Type | Collation | Attributes | Null| Extra |
 | --- | --- | --- | --- | --- | --- |
@@ -69,7 +65,7 @@ Table: users
 Define your own models:
 ```php
 <?php
-use PhpOrm\DB;
+use Riverside\Orm\DB;
 
 class User extends DB
 {
@@ -89,13 +85,17 @@ class User extends DB
 ### Query Builder
 - with model:
  create an instance of a model using the `factory` method. Then chain multiple methods.
+ The following is example of simple CRUD:
 ```php
-User::factory()->get();
+$id = User::factory()->insert(['name' => 'Chris', 'email' => 'chris@aol.com']);
+$user = User::factory()->where('id', $id)->get();
+$affected_rows = User::factory()->where('id', $id)->update(['name' => 'Chris Johnson']);
+$affected_rows = User::factory()->where('id', $id)->delete();
 ```
 
-- without model: create a new instance of `PhpOrm\DB` class
+- without model: create a new instance of `Riverside\Orm\DB` class
 ```php
-$db = new \PhpOrm\DB();
+$db = new \Riverside\Orm\DB();
 $db->table('users')->get();
 ```
 
