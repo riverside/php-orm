@@ -1,24 +1,82 @@
 <?php
-namespace PhpOrm\Tests;
+declare(strict_types=1);
+
+namespace Riverside\Orm\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PhpOrm\Configuration;
-use PhpOrm\Connection;
+use Riverside\Orm\Configuration;
+use Riverside\Orm\Connection;
 
 class ConnectionTest extends TestCase
 {
-    public static function getConfiguration()
+    /**
+     * @return Configuration
+     */
+    public function testConfiguration(): Configuration
     {
-        return new Configuration(
-            'root',
-            'secret',
-            'test',
-            'localhost',
-            3306,
-            'mysql',
-            'utf8mb4',
-            'utf8mb4_general_ci'
+        $configuration = new Configuration(
+            getenv('DEFAULT_USERNAME'),
+            getenv('DEFAULT_PASSWORD'),
+            getenv('DEFAULT_DATABASE'),
+            getenv('DEFAULT_HOST'),
+            (int) getenv('DEFAULT_PORT'),
+            getenv('DEFAULT_DRIVER'),
+            getenv('DEFAULT_CHARSET'),
+            getenv('DEFAULT_COLLATION')
         );
+
+        $this->assertInstanceOf(Configuration::class, $configuration);
+
+        return $configuration;
+    }
+
+    /**
+     * @return Configuration
+     */
+    public function testConfigurationWrongCredentials(): Configuration
+    {
+        $configuration = new Configuration(
+            'wrong_user',
+            'wrong_pswd',
+            getenv('DEFAULT_DATABASE'),
+            getenv('DEFAULT_HOST'),
+            (int) getenv('DEFAULT_PORT'),
+            getenv('DEFAULT_DRIVER'),
+            getenv('DEFAULT_CHARSET'),
+            getenv('DEFAULT_COLLATION')
+        );
+
+        $this->assertInstanceOf(Configuration::class, $configuration);
+
+        return $configuration;
+    }
+
+    /**
+     * @depends testConfiguration
+     * @param Configuration $configuration
+     * @return Connection
+     */
+    public function testConnection(Configuration $configuration): Connection
+    {
+        $connection = new Connection($configuration);
+
+        $this->assertInstanceOf(Connection::class, $connection);
+
+        return $connection;
+    }
+
+    /**
+     * @depends testConfigurationWrongCredentials
+     * @param Configuration $configuration
+     * @return Connection
+     */
+    public function testConnectionWrongCredentials(Configuration $configuration): Connection
+    {
+        $connection = new Connection($configuration);
+
+        $this->assertInstanceOf(Connection::class, $connection);
+
+        return $connection;
     }
 
     public function testAttributes()
@@ -32,49 +90,92 @@ class ConnectionTest extends TestCase
         }
     }
 
-    public function testDependencyInjection()
+    /**
+     * @depends testConnection
+     * @param Connection $connection
+     */
+    public function testDependencyInjection(Connection $connection)
     {
-        $configuration = self::getConfiguration();
-        $connection = new Connection($configuration);
-
-        $this->assertSame('mysql:host=localhost;port=3306;dbname=test;charset=utf8mb4', $connection->getDsn());
+        if (getenv('DEFAULT_DRIVER') == 'mysql')
+        {
+            $dsn = sprintf('%s:host=%s;port=%u;dbname=%s;charset=%s',
+                getenv('DEFAULT_DRIVER'), getenv('DEFAULT_HOST'), getenv('DEFAULT_PORT'),
+                getenv('DEFAULT_DATABASE'), getenv('DEFAULT_CHARSET'));
+            $this->assertSame($dsn, $connection->getDsn());
+        }
     }
 
-    public function testConnectFailed()
+    /**
+     * @depends testConnection
+     * @param Connection $connection
+     * @throws \Riverside\Orm\Exception
+     * @return Connection
+     */
+    public function testConnectSucceed(Connection $connection): Connection
     {
-        $configuration = self::getConfiguration();
-        $connection = new Connection($configuration);
+        $connection->connect();
 
+        $this->assertInstanceOf(\PDO::class, $connection->getDbh());
+
+        return $connection;
+    }
+
+    /**
+     * @depends testConnectionWrongCredentials
+     * @param Connection $connection
+     * @throws \Riverside\Orm\Exception
+     */
+    public function testConnectFailed(Connection $connection)
+    {
         $this->expectException(\Exception::class);
 
         $connection->connect();
     }
 
-    public function testDisconnect()
+    /**
+     * @depends testConnectSucceed
+     * @param Connection $connection
+     * @throws \Riverside\Orm\Exception
+     */
+    public function testReconnectSucceed(Connection $connection)
     {
-        $configuration = self::getConfiguration();
-        $connection = new Connection($configuration);
+        $connection->reconnect();
 
+        $this->assertInstanceOf(\PDO::class, $connection->getDbh());
+    }
+
+    /**
+     * @depends testConnectSucceed
+     * @param Connection $connection
+     * @return Connection
+     */
+    public function testDisconnect(Connection $connection): Connection
+    {
         $connection->disconnect();
 
         $this->assertNull($connection->getDbh());
+
+        return $connection;
     }
 
-    public function testReconnectFailed()
+    /**
+     * @depends testConnectionWrongCredentials
+     * @param Connection $connection
+     * @throws \Riverside\Orm\Exception
+     */
+    public function testReconnectFailed(Connection $connection)
     {
-        $configuration = self::getConfiguration();
-        $connection = new Connection($configuration);
-
         $this->expectException(\Exception::class);
 
         $connection->reconnect();
     }
 
-    public function testDbhFailed()
+    /**
+     * @depends testConnection
+     * @param Connection $connection
+     */
+    public function testDbhFailed(Connection $connection)
     {
-        $configuration = self::getConfiguration();
-        $connection = new Connection($configuration);
-
         $this->assertNull($connection->getDbh());
     }
 }

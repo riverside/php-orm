@@ -1,25 +1,35 @@
 <?php
-namespace PhpOrm\Tests;
+declare(strict_types=1);
 
-use PhpOrm\Exception;
+namespace Riverside\Orm\Tests;
+
+use Riverside\Orm\Exception;
 use PHPUnit\Framework\TestCase;
 
 class ExceptionTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testExceptionMessage()
     {
+        $message = 'Custom exception message';
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Custom exception message');
+        $this->expectExceptionMessage($message);
 
-        throw new Exception('Custom exception message');
+        throw new Exception($message);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testExceptionCode()
     {
+        $code = 123;
         $this->expectException(Exception::class);
-        $this->expectExceptionCode(123);
+        $this->expectExceptionCode($code);
 
-        throw new Exception('Custom exception message', 123);
+        throw new Exception('Custom exception message', $code);
     }
 
     public function testPreviousException()

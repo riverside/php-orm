@@ -1,8 +1,10 @@
 <?php
-namespace PhpOrm\Tests;
+declare(strict_types=1);
+
+namespace Riverside\Orm\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PhpOrm\Expression;
+use Riverside\Orm\Expression;
 
 class ExpressionTest extends TestCase
 {

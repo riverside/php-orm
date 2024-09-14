@@ -1,23 +1,32 @@
 <?php
-namespace PhpOrm\Tests;
+declare(strict_types=1);
+
+namespace Riverside\Orm\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PhpOrm\Configuration;
+use Riverside\Orm\Configuration;
 
 class ConfigurationTest extends TestCase
 {
-    public static function getConfiguration()
+    /**
+     * @return Configuration
+     */
+    public function testConfiguration(): Configuration
     {
-        return new Configuration(
-            'root',
-            'secret',
-            'test',
-            'localhost',
-            3306,
-            'mysql',
-            'utf8mb4',
-            'utf8mb4_general_ci'
+        $configuration = new Configuration(
+            getenv('DEFAULT_USERNAME'),
+            getenv('DEFAULT_PASSWORD'),
+            getenv('DEFAULT_DATABASE'),
+            getenv('DEFAULT_HOST'),
+            (int) getenv('DEFAULT_PORT'),
+            getenv('DEFAULT_DRIVER'),
+            getenv('DEFAULT_CHARSET'),
+            getenv('DEFAULT_COLLATION')
         );
+
+        $this->assertInstanceOf(Configuration::class, $configuration);
+
+        return $configuration;
     }
 
     public function testAttributes()
@@ -37,17 +46,19 @@ class ConfigurationTest extends TestCase
         }
     }
 
-    public function testConfig()
+    /**
+     * @depends testConfiguration
+     * @param Configuration $configuration
+     */
+    public function testConfig(Configuration $configuration)
     {
-        $configuration = self::getConfiguration();
-
-        $this->assertSame('utf8mb4', $configuration->getCharset());
-        $this->assertSame('utf8mb4_general_ci', $configuration->getCollation());
-        $this->assertSame('test', $configuration->getDatabase());
-        $this->assertSame(3306, $configuration->getPort());
-        $this->assertSame('localhost', $configuration->getHost());
-        $this->assertSame('root', $configuration->getUsername());
-        $this->assertSame('secret', $configuration->getPassword());
-        $this->assertSame('mysql', $configuration->getDriver());
+        $this->assertSame(getenv('DEFAULT_CHARSET'), $configuration->getCharset());
+        $this->assertSame(getenv('DEFAULT_COLLATION'), $configuration->getCollation());
+        $this->assertSame(getenv('DEFAULT_DATABASE'), $configuration->getDatabase());
+        $this->assertSame((int) getenv('DEFAULT_PORT'), $configuration->getPort());
+        $this->assertSame(getenv('DEFAULT_HOST'), $configuration->getHost());
+        $this->assertSame(getenv('DEFAULT_USERNAME'), $configuration->getUsername());
+        $this->assertSame(getenv('DEFAULT_PASSWORD'), $configuration->getPassword());
+        $this->assertSame(getenv('DEFAULT_DRIVER'), $configuration->getDriver());
     }
 }
