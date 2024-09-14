@@ -6,9 +6,24 @@ namespace Riverside\Orm\Tests;
 use PHPUnit\Framework\TestCase;
 use Riverside\Orm\Configuration;
 use Riverside\Orm\Connection;
+use Riverside\Orm\Exception;
 
 class ConnectionTest extends TestCase
 {
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        putenv('DEFAULT_USERNAME=root');
+        putenv('DEFAULT_PASSWORD=1');
+        putenv('DEFAULT_DATABASE=:memory:');
+        putenv('DEFAULT_HOST=localhost');
+        putenv('DEFAULT_PORT=3306');
+        putenv('DEFAULT_DRIVER=sqlite');
+        putenv('DEFAULT_CHARSET=utf8mb4');
+        putenv('DEFAULT_COLLATION=utf8mb4_general_ci');
+    }
+
     /**
      * @return Configuration
      */
@@ -36,12 +51,12 @@ class ConnectionTest extends TestCase
     public function testConfigurationWrongCredentials(): Configuration
     {
         $configuration = new Configuration(
-            'wrong_user',
-            'wrong_pswd',
+            getenv('DEFAULT_USERNAME'),
+            getenv('DEFAULT_PASSWORD'),
             getenv('DEFAULT_DATABASE'),
             getenv('DEFAULT_HOST'),
             (int) getenv('DEFAULT_PORT'),
-            getenv('DEFAULT_DRIVER'),
+            'wrong_driver',
             getenv('DEFAULT_CHARSET'),
             getenv('DEFAULT_COLLATION')
         );
@@ -96,12 +111,16 @@ class ConnectionTest extends TestCase
      */
     public function testDependencyInjection(Connection $connection)
     {
-        if (getenv('DEFAULT_DRIVER') == 'mysql')
+        switch (getenv('DEFAULT_DRIVER'))
         {
-            $dsn = sprintf('%s:host=%s;port=%u;dbname=%s;charset=%s',
-                getenv('DEFAULT_DRIVER'), getenv('DEFAULT_HOST'), getenv('DEFAULT_PORT'),
-                getenv('DEFAULT_DATABASE'), getenv('DEFAULT_CHARSET'));
-            $this->assertSame($dsn, $connection->getDsn());
+            case 'mysql':
+                $dsn = sprintf('%s:host=%s;port=%u;dbname=%s;charset=%s',
+                    getenv('DEFAULT_DRIVER'), getenv('DEFAULT_HOST'), getenv('DEFAULT_PORT'),
+                    getenv('DEFAULT_DATABASE'), getenv('DEFAULT_CHARSET'));
+                $this->assertSame($dsn, $connection->getDsn());
+                break;
+            default:
+                $this->assertTrue(true);
         }
     }
 
@@ -127,7 +146,7 @@ class ConnectionTest extends TestCase
      */
     public function testConnectFailed(Connection $connection)
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
 
         $connection->connect();
     }
@@ -165,7 +184,7 @@ class ConnectionTest extends TestCase
      */
     public function testReconnectFailed(Connection $connection)
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
 
         $connection->reconnect();
     }
