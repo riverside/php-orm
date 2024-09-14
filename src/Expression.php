@@ -1,10 +1,12 @@
 <?php
-namespace PhpOrm;
+declare(strict_types=1);
+
+namespace Riverside\Orm;
 
 /**
  * Class Expression
  *
- * @package PhpOrm
+ * @package Riverside\Orm
  */
 class Expression
 {

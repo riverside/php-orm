@@ -1,10 +1,12 @@
 <?php
-namespace PhpOrm;
+declare(strict_types=1);
+
+namespace Riverside\Orm;
 
 /**
  * Class Connection
  *
- * @package PhpOrm
+ * @package Riverside\Orm
  */
 class Connection extends Base
 {

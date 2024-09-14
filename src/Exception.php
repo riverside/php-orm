@@ -1,10 +1,12 @@
 <?php
-namespace PhpOrm;
+declare(strict_types=1);
+
+namespace Riverside\Orm;
 
 /**
  * Class Exception
  *
- * @package PhpOrm
+ * @package Riverside\Orm
  */
 class Exception extends \Exception
 {

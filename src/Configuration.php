@@ -1,10 +1,12 @@
 <?php
-namespace PhpOrm;
+declare(strict_types=1);
+
+namespace Riverside\Orm;
 
 /**
  * Class Configuration
  *
- * @package PhpOrm
+ * @package Riverside\Orm
  */
 class Configuration
 {

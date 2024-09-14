@@ -1,10 +1,12 @@
 <?php
-namespace PhpOrm;
+declare(strict_types=1);
+
+namespace Riverside\Orm;
 
 /**
  * Class Base
  *
- * @package PhpOrm
+ * @package Riverside\Orm
  */
 class Base
 {
@@ -12,11 +14,11 @@ class Base
      * Throws an exception
      *
      * @param string $message
-     * @param int|null $code
-     * @param \Throwable|null $previous
+     * @param int $code (optional)
+     * @param \Throwable|null $previous (optional)
      * @throws Exception
      */
-    public function throwException(string $message, int $code=null, \Throwable $previous=null)
+    public function throwException(string $message, int $code=0, \Throwable $previous=null)
     {
         throw new Exception($message, $code, $previous);
     }

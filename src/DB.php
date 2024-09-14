@@ -1,16 +1,16 @@
 <?php
-namespace PhpOrm;
+declare(strict_types=1);
+
+namespace Riverside\Orm;
 
 /**
  * Class DB
  *
- * @package PhpOrm
+ * @package Riverside\Orm
  */
 class DB extends Base
 {
     protected $attributes = array();
-
-    private static $config = 'database.php';
 
     protected $connection = 'default';
 
@@ -53,9 +53,13 @@ class DB extends Base
     /**
      * DB constructor.
      *
+     * @param string|null $connection
      * @throws Exception
      */
-    public function __construct() {
+    public function __construct(string $connection=null) {
+        if ($connection) {
+            $this->connection = $connection;
+        }
         $this->mount();
     }
 
@@ -238,17 +242,10 @@ class DB extends Base
     }
 
     /**
-     * @param string $filename
-     */
-    public static function config(string $filename) {
-        self::$config = $filename;
-    }
-
-    /**
-     * @return int|null
+     * @return int
      * @throws Exception
      */
-    public function count(): ?int
+    public function count(): int
     {
         $statement = "SELECT COUNT(*) AS cnt";
 
@@ -280,7 +277,9 @@ class DB extends Base
 
         $this->dump();
 
-        return $this->sth->fetchColumn();
+        $result = $this->sth->fetchColumn();
+
+        return $result ? (int) $result : 0;
     }
 
     /**
@@ -296,10 +295,10 @@ class DB extends Base
 
     /**
      * @param null $modifiers
-     * @return int|null
+     * @return int
      * @throws Exception
      */
-    public function delete($modifiers = null): ?int
+    public function delete($modifiers = null): int
     {
         if ($modifiers) {
             $modifiers = is_array($modifiers) ? $modifiers : array($modifiers);
@@ -427,18 +426,18 @@ class DB extends Base
     /**
      * @param array $data
      * @param null $modifiers
-     * @return int|null
+     * @return int
      * @throws Exception
      */
-    public function insert(array $data, $modifiers = null): ?int
+    public function insert(array $data, $modifiers = null): int
     {
         $this->fire($this->buildInsert($data, $modifiers));
 
         $this->dump();
 
         return $this->sth->rowCount()
-            ? $this->dbh->lastInsertId()
-            : false;
+            ? (int) $this->dbh->lastInsertId()
+            : 0;
     }
 
     /**
@@ -500,21 +499,13 @@ class DB extends Base
             return $this;
         }
 
-        if (!is_file(self::$config))
-        {
-            $this->throwException("File '".self::$config."' not found.");
-        }
-        $database = include self::$config;
-        if (!isset($database[$this->connection]))
-        {
-            $this->throwException("Connection not found.");
-        }
-        $opts = $database[$this->connection];
+        $opts = [];
         foreach (array('username', 'password', 'database', 'host', 'port', 'driver', 'charset', 'collation') as $key)
         {
-            if (!array_key_exists($key, $opts))
+            $opts[$key] = getenv(strtoupper($this->connection . '_' . $key));
+            if ($opts[$key] === false)
             {
-                $this->throwException("The '$key' index was not found in config.");
+                $this->throwException("The '$key' index was not found as environment variable.");
             }
         }
 
@@ -523,7 +514,7 @@ class DB extends Base
             $opts['password'],
             $opts['database'],
             $opts['host'],
-            $opts['port'],
+            intval($opts['port']),
             $opts['driver'],
             $opts['charset'],
             $opts['collation']);
@@ -587,18 +578,18 @@ class DB extends Base
     /**
      * @param array $data
      * @param null $modifiers
-     * @return int|null
+     * @return int
      * @throws Exception
      */
-    public function replace(array $data, $modifiers = null): ?int
+    public function replace(array $data, $modifiers = null): int
     {
         $this->fire($this->buildInsert($data, $modifiers, 'replace'));
 
         $this->dump();
 
         return $this->sth->rowCount()
-            ? $this->dbh->lastInsertId()
-            : false;
+            ? (int) $this->dbh->lastInsertId()
+            : 0;
     }
 
     /**
@@ -785,31 +776,31 @@ class DB extends Base
     /**
      * @param array $data
      * @param null $modifiers
-     * @return int|null
+     * @return int
      * @throws Exception
      */
-    public function upsert(array $data, $modifiers = null): ?int
+    public function upsert(array $data, $modifiers = null): int
     {
         $this->fire($this->buildInsert($data, $modifiers, 'upsert'));
 
         return $this->sth->rowCount()
-            ? $this->dbh->lastInsertId()
-            : false;
+            ? (int) $this->dbh->lastInsertId()
+            : 0;
     }
 
     /**
      * @param string $column
-     * @return string
+     * @return null|string
      * @throws Exception
      */
-    public function value(string $column): string
+    public function value(string $column): ?string
     {
         $row = $this->first();
         if (!$row) {
-            return false;
+            return null;
         }
 
-        return array_key_exists($column, $row) ? $row[$column] : NULL;
+        return array_key_exists($column, $row) ? $row[$column] : null;
     }
 
     /**
