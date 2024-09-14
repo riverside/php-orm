@@ -4,4 +4,14 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <env name="DEFAULT_USERNAME" value="" />
+        <env name="DEFAULT_PASSWORD" value="" />
+        <env name="DEFAULT_DATABASE" value="" />
+        <env name="DEFAULT_HOST" value="" />
+        <env name="DEFAULT_PORT" value="" />
+        <env name="DEFAULT_DRIVER" value="" />
+        <env name="DEFAULT_CHARSET" value="" />
+        <env name="DEFAULT_COLLATION" value="" />
+    </php>
 </phpunit>
