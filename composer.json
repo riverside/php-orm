@@ -2,7 +2,7 @@
     "name": "riverside/php-orm",
     "description": "PHP ORM micro-library and query builder",
     "type": "library",
-    "version": "1.1.1",
+    "version": "2.0.0",
     "keywords": ["php", "orm", "pdo", "mysql", "database"],
     "homepage": "https://github.com/riverside/php-orm",
     "license": "MIT",
@@ -23,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PhpOrm\\": "src/"
+            "Riverside\\Orm\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PhpOrm\\Tests\\": "tests/"
+            "Riverside\\Orm\\Tests\\": "tests/"
         }
     },
     "scripts": {
